@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import ISEmojiView
 
 public extension Emoji {
     
@@ -14,17 +15,44 @@ public extension Emoji {
     /// ensure that the view is only used for valid licenses.
     struct KeyboardWrapper: View {
         
+        let actionHandler: KeyboardActionHandler
+        let keyboardContext: KeyboardContext
+        let calloutContext: CalloutContext?
+        let styleProvider: KeyboardStyleProvider
+        
         init(
             actionHandler: KeyboardActionHandler,
             keyboardContext: KeyboardContext,
             calloutContext: CalloutContext?,
             styleProvider: KeyboardStyleProvider
-        ) {}
-        
-        public var body: some View {
-            EmptyView()
+        ) {
+            self.actionHandler = actionHandler
+            self.keyboardContext = keyboardContext
+            self.calloutContext = calloutContext
+            self.styleProvider = styleProvider
         }
         
-        static let isEmojiKeyboardAvailable = false
+        public var body: some View {
+            EmojiView_SwiftUI(
+                needToShowAbcButton: true,
+                needToShowDeleteButton: true,
+                updateRecentEmojiImmediately: true,
+                didSelect: { emoji in
+                    let action = KeyboardAction.emoji(emoji)
+                    actionHandler.handle(action)
+                },
+                didPressChangeKeyboard: {
+                    actionHandler.handle(.keyboardType(.alphabetic(.lowercased)))
+                },
+                didPressDeleteBackward: {
+                    actionHandler.handle(.backspace)
+                },
+                dDidPressDismissKeyboard: {
+                    actionHandler.handle(.dismissKeyboard)
+                }
+            )
+        }
+        
+        static let isEmojiKeyboardAvailable = true
     }
 }
