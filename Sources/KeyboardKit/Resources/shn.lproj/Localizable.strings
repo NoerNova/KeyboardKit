@@ -1,0 +1,25 @@
+//
+//  Localizable-shn.strings
+//  Panglong_iKeyboard
+//
+//  Created by NorHsangPha BoonHse on 23/9/2567 BE.
+//
+
+"locale" = "shn";
+
+"capsLock" = "capsLock";
+"continue" = "သိုပ်ႇၵႂႃႇ";
+"done" = "ယဝ်ႉတူဝ်ႈ";
+"emergencyCall" = "Emergency Call";
+"go" = "သိုပ်ႇၵႂႃႇ";
+"join" = "ၶဝ်ႈႁူမ်ႈ";
+"next" = "သိုပ်ႇၵႂႃႇ";
+"ok" = "OK";
+"return" = "return";
+"route" = "သွၵ်ႈႁႃ";
+"search" = "သွၵ်ႈႁႃ";
+"send" = "သူင်ႇ";
+"space" = "ပဝ်ႇ";
+"switcherAlphabetic" = "ၵၶင";
+"switcherNumeric" = "123";
+"switcherSymbolic" = "#+=";

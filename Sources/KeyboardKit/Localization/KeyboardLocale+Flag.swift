@@ -76,6 +76,7 @@ public extension KeyboardLocale {
         case .russian: "🇷🇺"
         case .serbian: "🇷🇸"
         case .serbian_latin: "🇷🇸"
+        case .shan: ""
         case .slovenian: "🇸🇮"
         case .slovak: "🇸🇰"
         case .spanish: "🇪🇸"
