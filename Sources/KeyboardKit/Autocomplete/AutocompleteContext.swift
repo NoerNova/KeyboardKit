@@ -127,3 +127,23 @@ public class AutocompleteContext: ObservableObject {
         suggestions = []
     }
 }
+
+public extension AutocompleteContext {
+
+    /// Get a 0-1 next character percentage prediction for a certain char.
+    func nextCharacterPrediction(for char: String) -> Double {
+        guard
+            let first = char.first,
+            let value = nextCharacterPredictions[first]
+        else { return 0 }
+        return value
+    }
+
+    /// Get a 0-1 next character percentage prediction for a certain action.
+    func nextCharacterPrediction(for action: KeyboardAction) -> Double {
+        switch action {
+        case .character(let char): nextCharacterPrediction(for: char)
+        default: 0
+        }
+    }
+}
