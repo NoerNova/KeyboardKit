@@ -22,17 +22,21 @@ let package = Package(
         .package(
             url: "https://github.com/danielsaidi/MockingKit.git",
             .upToNextMajor(from: "1.3.0")
-        )
+        ),
+        .package(
+            url: "https://github.com/NoerNova/ISEmojiView.git",
+                .upToNextMinor(from: "0.3.4")
+        ),
     ],
     targets: [
         .target(
             name: "KeyboardKit",
-            dependencies: [],
+            dependencies: ["ISEmojiView"],
             resources: [.process("Resources")]
         ),
         .testTarget(
             name: "KeyboardKitTests",
-            dependencies: ["KeyboardKit", "MockingKit"]
+            dependencies: ["KeyboardKit", "MockingKit", "ISEmojiView"]
         )
     ]
 )
