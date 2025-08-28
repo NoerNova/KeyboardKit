@@ -3,7 +3,7 @@
 //  Demo
 //
 //  Created by Daniel Saidi on 2024-08-19.
-//  Copyright © 2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2024-2025 Daniel Saidi. All rights reserved.
 //
 
 #if IS_KEYBOARDKIT
@@ -12,38 +12,35 @@ import KeyboardKit
 import KeyboardKitPro
 #endif
 
-public extension KeyboardApp {
+extension KeyboardApp {
 
-    /// This value defines properties for the demo app.
+    /// This `KeyboardApp` value defines the demo app.
     ///
-    /// The app doesn't support syncing data with App Groups,
-    /// since it's not code signed, but it still defines one
-    /// below, just to show you how it's done.
+    /// The demo uses a `KeyboardKit.license` file to unlock
+    /// KeyboardKit Pro, without having to include a license
+    /// key in the app information below. This also lets the
+    /// app update its license without also having to update
+    /// KeyboardKit version. Note that this file is added to
+    /// both the app and the `KeyboardPro` keyboard.
     ///
-    /// The license key is demo-specific, and only works for
-    /// this particular demo app. The bundle ID is used when
-    /// presenting the keyboard status on the home screen.
-    ///
-    /// Note how this file is added to this main app and the
-    /// `Pro` keyboard, to make it available in both targets.
-    static var demoApp: Self {
+    /// The App Group ID is only to show you how you can use
+    /// a `KeyboardApp` to set up App Group data syncing for
+    /// an app and its keyboard. It doesn't work in the demo.
+    /// 
+    /// See `DemoApp.swift` for more info about the demo app.
+    static var keyboardKitDemo: KeyboardApp {
         .init(
             name: "KeyboardKit Demo",
-            licenseKey: "299B33C6-061C-4285-8189-90525BCAF098",
-            bundleId: "com.keyboardkit.demo",
-            appGroupId: "group.com.keyboardkit.demo",
-            locales: .all,
-            dictationDeepLink: "kkdemo://dictation"
+            // licenseKey: "299B33C6-061C-4285-8189-90525BCAF098",  // Sets up KeyboardKit Pro!
+            appGroupId: "group.com.keyboardkit.demo",               // Sets up App Group data sync
+            locales: .keyboardKitSupported,                         // Sets up the enabled locales
+            autocomplete: .init(                                    // Sets up custom autocomplete
+                // nextWordPredictionRequest: .claude(apiKey: "")   // Sets up AI-based prediction (add your own key)
+            ),
+            deepLinks: .init(
+                app: "kkdemo://"                                    // Defines how to open the app
+                // dictation: "kkdemo://dictation"                  // You can customize any default deep link
+            )
         )
-    }
-}
-
-public extension Dictation.KeyboardConfiguration {
-
-    /// This configuration is derived from the demo app, but
-    /// has a fallback in case that one doesn't work.
-    static var app: Self {
-        let config = KeyboardApp.demoApp.dictationConfiguration
-        return config ?? .init(appGroupId: "", appDeepLink: "")
     }
 }

@@ -1,22 +1,41 @@
-import Foundation
+import SwiftUI
 
-@available(*, deprecated, renamed: "AutocompleteService")
-public typealias CalloutActionProvider = CalloutService
+public extension CalloutContext {
 
-public extension Callouts {
-
-    @available(*, deprecated, renamed: "StandardService")
-    typealias StandardActionProvider = StandardService
-
-    @available(*, deprecated, renamed: "BaseService")
-    typealias BaseActionProvider = BaseService
-
-    @available(*, deprecated, renamed: "DisabledService")
-    typealias DisabledActionProvider = DisabledService
+    @available(*, deprecated, renamed: "updateSecondaryActions(_:for:in:alignment:)")
+    func updateSecondaryActions(
+        for action: KeyboardAction,
+        in geo: GeometryProxy,
+        alignment: HorizontalAlignment? = nil
+    ) {
+        self.updateSecondaryActions(
+            nil,
+            for: action,
+            in: geo,
+            alignment: alignment
+        )
+    }
 }
 
-@available(*, deprecated, renamed: "Callouts.BaseService")
-public typealias BaseCalloutActionProvider = Callouts.BaseService
+@available(*, deprecated, renamed: "Callouts")
+public typealias KeyboardCallout = Callouts
 
-@available(*, deprecated, renamed: "Callouts.StandardService")
-public typealias StandardCalloutActionProvider = Callouts.StandardService
+@available(*, deprecated, renamed: "CalloutContext")
+public typealias KeyboardCalloutContext = CalloutContext
+
+@available(*, deprecated, renamed: "CalloutService")
+public typealias KeyboardCalloutService = CalloutService
+
+public extension CalloutService where Self == Callouts.BaseCalloutService {
+
+    static var preview: CalloutService {
+        Callouts.BaseCalloutService()
+    }
+}
+
+public extension KeyboardPreviews {
+
+    class CalloutService: Callouts.BaseCalloutService {
+        public override func triggerFeedbackForSelectionChange() {}
+    }
+}

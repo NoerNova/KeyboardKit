@@ -3,10 +3,10 @@
 //  KeyboardKitTests
 //
 //  Created by Daniel Saidi on 2023-01-09.
-//  Copyright © 2023-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2023-2025 Daniel Saidi. All rights reserved.
 //
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
 import XCTest
 
 @testable import KeyboardKit

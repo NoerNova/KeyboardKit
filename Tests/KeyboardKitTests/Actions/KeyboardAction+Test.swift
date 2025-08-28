@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-05-11.
-//  Copyright © 2019-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2019-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
@@ -14,6 +14,7 @@ extension KeyboardAction {
     static var testActions: [KeyboardAction] {
         [
             .none,
+            // .autocompleteSuggestion(.init(text: "a")),
             .dismissKeyboard,
             .character(""),
             .characterMargin(""),
@@ -28,9 +29,7 @@ extension KeyboardAction {
             .image(description: "", keyboardImageName: "", imageName: ""),
             .text(""),
             
-            .keyboardType(.alphabetic(.lowercased)),
-            .keyboardType(.alphabetic(.uppercased)),
-            .keyboardType(.alphabetic(.capsLocked)),
+            .keyboardType(.alphabetic),
             .keyboardType(.numeric),
             .keyboardType(.symbolic),
             .keyboardType(.email),
@@ -51,10 +50,7 @@ extension KeyboardAction {
             .primary(.return),
             
             .capsLock,
-            .shift(currentCasing: .lowercased),
-            .shift(currentCasing: .uppercased),
-            .shift(currentCasing: .capsLocked),
-            
+            .shift(.auto),
             .space,
             .systemImage(description: "", keyboardImageName: "", imageName: ""),
             .systemSettings,

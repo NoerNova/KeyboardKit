@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-08-26.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
@@ -11,24 +11,24 @@ import Foundation
 public extension KeyboardLayout {
 
     static var preview: KeyboardLayout {
-        KeyboardPreviews.PreviewKeyboardLayoutService()
+        KeyboardPreviews.LayoutService()
             .keyboardLayout(for: .preview)
     }
 }
 
-public extension KeyboardLayoutService where Self == KeyboardPreviews.PreviewKeyboardLayoutService {
+public extension KeyboardLayoutService where Self == KeyboardPreviews.LayoutService {
 
     static var preview: KeyboardLayoutService {
-        KeyboardPreviews.PreviewKeyboardLayoutService()
+        KeyboardPreviews.LayoutService()
     }
 }
 
 public extension KeyboardPreviews {
  
-    class PreviewKeyboardLayoutService: KeyboardLayoutService {
+    class LayoutService: KeyboardLayoutService {
 
         public init(keyboardContext: KeyboardContext = .preview) {
-            service = KeyboardLayout.StandardService()
+            service = KeyboardLayout.StandardLayoutService()
         }
 
         private let service: KeyboardLayoutService

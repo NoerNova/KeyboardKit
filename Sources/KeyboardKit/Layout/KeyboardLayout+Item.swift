@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-02-03.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import CoreGraphics
@@ -13,8 +13,8 @@ public extension KeyboardLayout {
     
     /// A keyboard layout items defines an action, size, and
     /// optional insets for a key on a layout-based keyboard.
-    struct Item: Equatable, KeyboardLayoutIdentifiable {
-        
+    struct Item: Equatable, Sendable {
+
         /// Create a new layout item.
         ///
         /// - Parameters:
@@ -45,9 +45,35 @@ public extension KeyboardLayout {
         
         /// The edge insets to apply.
         public var edgeInsets: EdgeInsets
-        
-        /// The ID used to identify the item in a row.
-        public var rowId: KeyboardAction { action }
+    }
+
+    /// This typealias represents a list of layout items.
+    typealias ItemRow = [Item]
+
+    /// This typealias represents a list of layout item rows.
+    typealias ItemRows = [ItemRow]
+}
+
+public extension KeyboardLayout.ItemRow {
+
+    /// Get a leading character margin action for the row, if any
+    var leadingCharacterMarginAction: KeyboardAction {
+        characterMarginAction(for: first)
+    }
+
+    /// Get a trailing character margin action for the row, if any
+    var trailingCharacterMarginAction: KeyboardAction {
+        characterMarginAction(for: last)
+    }
+
+    /// Get a matching character margin action for an action.
+    func characterMarginAction(
+        for item: KeyboardLayout.Item?
+    ) -> KeyboardAction {
+        switch item?.action {
+        case .character(let char): .characterMargin(char)
+        default: .none
+        }
     }
 }
 
@@ -94,15 +120,9 @@ public extension KeyboardLayout.Item {
 
 public extension KeyboardLayout {
     
-    /// This is a typealias for an array of layout items.
-    typealias ItemRow = [Item]
-
-    /// This is a typealias for an array of layout item rows.
-    typealias ItemRows = [ItemRow]
-    
     /// A size with point-based height and declarative width.
-    struct ItemSize: Equatable {
-        
+    struct ItemSize: KeyboardModel {
+
         /// Create a new layout item size.
         public init(
             width: ItemWidth,
@@ -120,8 +140,8 @@ public extension KeyboardLayout {
     }
     
     /// This enum specifies various layout item width types.
-    enum ItemWidth: Equatable {
-        
+    enum ItemWidth: KeyboardModel {
+
         /// A width that will share the available row space.
         case available
         
@@ -155,11 +175,5 @@ public extension KeyboardLayout {
         itemRows.compactMap { row in
             row.first { $0.action == action }
         }.first
-    }
-    
-    /// Get the item row, if any at a certain row index.
-    func itemRow(at rowIndex: Int) -> ItemRow? {
-        guard rowIndex > 0 && rowIndex < itemRows.count else { return nil }
-        return itemRows[rowIndex]
     }
 }

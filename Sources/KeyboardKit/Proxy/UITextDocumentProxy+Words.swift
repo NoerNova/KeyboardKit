@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-07-02.
-//  Copyright © 2019-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2019-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS) || os(visionOS)
@@ -73,15 +73,19 @@ public extension UITextDocumentProxy {
     }
     
     /// Replace the current word pre cursor part with a text.
-    func replaceCurrentWordPreCursorPart(with replacement: String) {
+    func replaceCurrentWordPreCursorPart(
+        with replacement: String,
+        additionalDeletionCount: Int = 0
+    ) {
         if let text = currentWordPreCursorPart {
             deleteBackward(times: (text as NSString).length)    // Casting to NSString to handle diacritics
         }
+        deleteBackward(times: additionalDeletionCount)
         insertText(replacement)
     }
 }
 
-extension UITextDocumentProxy {
+public extension UITextDocumentProxy {
     
     var wordDelimiters: [String] {
         String.wordDelimiters

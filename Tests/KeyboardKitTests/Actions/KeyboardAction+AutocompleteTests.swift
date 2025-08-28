@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-03-18.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import KeyboardKit
@@ -20,11 +20,11 @@ final class KeyboardAction_AutocompleteTests: XCTestCase {
         return actions
     }()
 
-    func testShouldApplyAutocompleteSuggestionsForSomeActions() {
+    func testShouldApplyAutocorrectSuggestionsForSomeActions() {
         actions.forEach {
             var expected = false
             switch $0 {
-            case .character(let char): expected = char.isWordDelimiter
+            case .character(let char): expected = char.isAutocorrectTrigger
             case .primary: expected = $0.isSystemAction
             case .space: expected = true
             default: expected = false

@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2020-06-15.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS)
@@ -20,20 +20,27 @@ class KeyboardInputViewController_ViewTests: XCTestCase {
         vc = KeyboardInputViewController()
     }
 
-    func testSettingUpViewRemovesAllOtherViewControllers() {
+    func testSettingUpKeyboardViewRemovesAllOtherViewControllers() {
         let subview = UIView()
         XCTAssertFalse(vc.view.subviews.contains(subview))
         vc.view.addSubview(subview)
         XCTAssertTrue(vc.view.subviews.contains(subview))
-        vc.setup(with: Text("Hello"))
+        vc.setupKeyboardView { _ in Text("Hello") }
         XCTAssertFalse(vc.view.subviews.contains(subview))
     }
-
-    func testSettingUpViewAddsChildControllerWithEnvironmentData() {
+    
+    func testSettingUpKeyboardViewAddsChildControllerWithEnvironmentData() {
         XCTAssertEqual(vc.children.count, 0)
-        vc.setup(with: Text("Hello"))
+        vc.setupKeyboardView { _ in Text("Hello") }
         XCTAssertEqual(vc.children.count, 1)
         XCTAssertFalse(vc.children[0] is KeyboardHostingController<Text>)
+    }
+    
+    func testSettingUpKeyboardViewAbortsIfDisableFlagIsSet() {
+        XCTAssertEqual(vc.children.count, 0)
+        vc.setupKeyboardViewIsEnabled = false
+        vc.setupKeyboardView { _ in Text("Hello") }
+        XCTAssertEqual(vc.children.count, 0)
     }
 }
 #endif

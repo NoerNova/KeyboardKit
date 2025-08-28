@@ -3,34 +3,14 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2020-12-28.
-//  Copyright © 2020-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2020-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
 
 public extension String {
-    
-    /// A list of mutable, western word delimiters.
-    static var wordDelimiters = "!.?,;:()[]{}<>".map(String.init) + [" ", .newline]
-    
-    /// Whether or not this is a western word delimiter.
-    var isWordDelimiter: Bool {
-        Self.wordDelimiters.contains(self)
-    }
-}
 
-public extension Collection where Element == String {
-
-    /// A list of mutable western word delimiters.
-    static var wordDelimiters: [String] { String.wordDelimiters }
-}
-
-public extension String {
-
-    /**
-     Check whether or not the last character within a string
-     is a word delimiter.
-     */
+    /// Check if the last character is a word delimiter.
     var hasWordDelimiterSuffix: Bool {
         String(last ?? Character("")).isWordDelimiter
     }

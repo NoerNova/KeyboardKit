@@ -3,12 +3,12 @@
  KeyboardKit
  
  Created by Daniel Saidi on 2022-01-08.
- Copyright © 2022 Daniel Saidi. All rights reserved.
+ Copyright © 2022-2025 Daniel Saidi. All rights reserved.
  */
 
 "locale" = "cs";
 
-"capsLock" = "";
+"capsLock" = "caps lock";
 "continue" = "continue";
 "done" = "Hotovo";
 "emergencyCall" = "Emergency Call";
@@ -20,12 +20,24 @@
 "route" = "route";
 "search" = "Hledat";
 "send" = "send";
+"searchEmoji" = "Hledat Emoji";
 "space" = "Mezerník";
+
 "switcherAlphabetic" = "ABC";
 "switcherNumeric" = "123";
 "switcherSymbolic" = "#+=";
 
-/**
- For emojis localization, copy the text in `Emojis.md`, then
- replace this comment with it and translate the keys.
- */
+"EmojiCategory.smileysAndPeople" = "Smileys & People";
+"EmojiCategory.animalsAndNature" = "Animals & Nature";
+"EmojiCategory.foodAndDrink" = "Food & Drink";
+"EmojiCategory.activity" = "Activity";
+"EmojiCategory.travelAndPlaces" = "Travel & Places";
+"EmojiCategory.objects" = "Objects";
+"EmojiCategory.symbols" = "Symbols";
+"EmojiCategory.flags" = "Flags";
+
+"EmojiCategory.favorites" = "Favorites";
+"EmojiCategory.frequent" = "Frequently Used";
+"EmojiCategory.recent" = "Most Recent";
+
+// For emoji localization, copy & translate the English list.

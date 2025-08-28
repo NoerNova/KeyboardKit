@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2020-07-01.
-//  Copyright © 2020-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2020-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
@@ -19,14 +19,12 @@ public extension KeyboardAction {
     /// This typealias defines a controller gesture action.
     typealias GestureAction = (KeyboardController?) -> Void
 
-    /// The controller action to trigger when this action is
-    /// triggered without a gesture.
+    /// The standard controller action.
     var standardAction: GestureAction? {
         standardReleaseAction ?? standardPressAction
     }
-    
-    /// The controller action to trigger when this action is
-    /// triggered with a certain gesture.
+
+    /// The standard controller action for a certain gesture.
     func standardAction(for gesture: Keyboard.Gesture) -> GestureAction? {
         switch gesture {
         case .doubleTap: standardDoubleTapAction
@@ -37,33 +35,29 @@ public extension KeyboardAction {
         case .end: nil
         }
     }
-    
-    /// The controller action to trigger when this action is
-    /// triggered with a double tap.
+
+    /// The standard double tap action, if any.
     var standardDoubleTapAction: GestureAction? { nil }
-    
-    /// The controller action to trigger when this action is
-    /// triggered with a long press.
+
+    /// The standard long press action, if any.
     var standardLongPressAction: GestureAction? {
         switch self {
         case .space: { _ in }
         default: nil
         }
     }
-    
-    /// The controller action to trigger when this action is
-    /// triggered with a press.
+
+    /// The standard press action, if any.
     var standardPressAction: GestureAction? {
         switch self {
         case .backspace: { $0?.deleteBackward() }
-        case .capsLock: { $0?.setKeyboardType(.alphabetic(.capsLocked)) }
+        case .capsLock: { $0?.setKeyboardCase(.capsLocked) }
         case .keyboardType(let type): { $0?.setKeyboardType(type) }
         default: nil
         }
     }
-    
-    /// The controller action to trigger when this action is
-    /// triggered with a release.
+
+    /// The standard release action, if any.
     var standardReleaseAction: GestureAction? {
         switch self {
         case .character(let char): { $0?.insertText(char) }
@@ -76,18 +70,18 @@ public extension KeyboardAction {
         case .moveCursorForward: { $0?.adjustTextPosition(by: 1) }
         case .nextLocale: { $0?.selectNextLocale() }
         case .primary: { $0?.insertText(.newline) }
-        case .shift(let current): current.standardReleaseAction
+        case .shift: { $0?.state.keyboardContext.keyboardCase.standardReleaseAction?($0) }
         case .space: { $0?.insertText(.space) }
-        case .systemSettings: { $0?.openUrl(.keyboardSettings) }
+        case .systemSettings: { $0?.openUrl(.systemSettings) }
         case .tab: { $0?.insertText(.tab) }
         case .text(let text): { $0?.insertText(text) }
         case .url(let url, _): { $0?.openUrl(url) }
+        case .urlDomain: { $0?.insertText(".") }
         default: nil
         }
     }
-    
-    /// The controller action to trigger when this action is
-    /// triggered, and repeated until it's released.
+
+    /// The standard repeat action, if any.
     var standardRepeatAction: GestureAction? {
         switch self {
         case .backspace: standardPressAction

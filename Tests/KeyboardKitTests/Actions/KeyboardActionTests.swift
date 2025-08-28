@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-05-11.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import KeyboardKit
@@ -114,16 +114,6 @@ final class KeyboardActionTests: XCTestCase {
             case .shift: XCTAssertTrue(result)
             case .tab: XCTAssertTrue(result)
             case .url: XCTAssertTrue(result)
-            default: XCTAssertFalse(result)
-            }
-        }
-    }
-
-    func testIsUppercasedShiftActionIsTrueForCharacterActions() {
-        actions.forEach { action in
-            let result = action.isUppercasedShiftAction
-            switch action {
-            case .shift(let state): XCTAssertEqual(result, state.isUppercased)
             default: XCTAssertFalse(result)
             }
         }

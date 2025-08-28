@@ -1,3 +1,11 @@
+//
+//  Feedback+AudioEngine.swift
+//  KeyboardKit
+//
+//  Created by Daniel Saidi on 2021-04-01.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
+//
+
 import Foundation
 
 #if os(iOS) || os(macOS) || os(tvOS) || os(visionOS)
@@ -23,14 +31,11 @@ public extension Feedback {
             default: play(audio)
             }
         }
-
-        @available(*, deprecated, message: "Use a feedback service or action handler instead")
-        static var shared = Feedback.AudioEngine()
     }
 }
 
 private extension Feedback.AudioEngine {
-    
+
     static var systemSoundIDs: [URL: SystemSoundID] = [:]
     
     func play(_ audio: Feedback.Audio) {

@@ -3,18 +3,18 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-10-15.
-//  Copyright © 2019-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2019-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
 
 public extension Feedback {
-    
+
     /// This struct can be used to configure audio feedback.
     ///
     /// You can use any of the standard configurations, like
-    /// ``enabled`` and ``disabled``, or create a custom one.
-    struct AudioConfiguration: Codable, Equatable {
+    /// ``standard`` and ``disabled``, or create custom ones.
+    struct AudioConfiguration: KeyboardModel {
         
         /// Create a custom audio feedback configuration.
         ///
@@ -24,9 +24,9 @@ public extension Feedback {
         ///   - system: The feedback to use for system keys, by default `.system`.
         ///   - custom: A list of custom feedback, by default `empty`.
         public init(
-            input: Feedback.Audio = .input,
-            delete: Feedback.Audio = .delete,
-            system: Feedback.Audio = .system,
+            input: Audio = .input,
+            delete: Audio = .delete,
+            system: Audio = .system,
             custom: [CustomFeedback] = []
         ) {
             self.input = input
@@ -36,13 +36,13 @@ public extension Feedback {
         }
         
         /// The audio to play when a delete key is pressed.
-        public var delete: Feedback.Audio
+        public var delete: Audio
         
         /// The audio to play when an input key is pressed.
-        public var input: Feedback.Audio
+        public var input: Audio
         
         /// The audio to play when a system key is pressed.
-        public var system: Feedback.Audio
+        public var system: Audio
         
         /// A list of custom audio feedback.
         public var custom: [CustomFeedback]
@@ -50,9 +50,9 @@ public extension Feedback {
 }
 
 public extension Feedback.AudioConfiguration {
-    
+
     /// This struct is used for custom audio feedback.
-    struct CustomFeedback: Codable, Equatable {
+    struct CustomFeedback: KeyboardModel {
         
         public init(
             action: KeyboardAction,
@@ -70,8 +70,21 @@ public extension Feedback.AudioConfiguration {
     }
 }
 
+public extension Feedback.AudioConfiguration {
+
+    /// A standard, enabled audio configuration.
+    static let standard = Self()
+
+    /// This configuration disables all audio feedback.
+    static let disabled = Self(
+        input: .none,
+        delete: .none,
+        system: .none
+    )
+}
+
 public extension Feedback.AudioConfiguration.CustomFeedback {
-    
+
     /// Create a custom audio feedback configuration.
     static func audio(
         _ feedback: Feedback.Audio,
@@ -83,7 +96,7 @@ public extension Feedback.AudioConfiguration.CustomFeedback {
 }
 
 public extension Feedback.AudioConfiguration {
-    
+
     /// Get a custom registered feedback, if any.
     func customFeedback(
         for gesture: Keyboard.Gesture,
@@ -116,17 +129,4 @@ public extension Feedback.AudioConfiguration {
     ) {
         custom.append(feedback)
     }
-}
-
-public extension Feedback.AudioConfiguration {
-    
-    /// This configuration enables all audio feedback.
-    static let enabled = Self()
-    
-    /// This configuration disables all audio feedback.
-    static let disabled = Self(
-        input: .none,
-        delete: .none,
-        system: .none
-    )
 }

@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2020-07-01.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import KeyboardKit
@@ -77,9 +77,7 @@ final class KeyboardAction_ActionsTests: XCTestCase {
         expected = [
             .backspace,
             .capsLock,
-            .keyboardType(.alphabetic(.lowercased)),
-            .keyboardType(.alphabetic(.uppercased)),
-            .keyboardType(.alphabetic(.capsLocked)),
+            .keyboardType(.alphabetic),
             .keyboardType(.numeric),
             .keyboardType(.symbolic),
             .keyboardType(.email),
@@ -106,9 +104,7 @@ final class KeyboardAction_ActionsTests: XCTestCase {
             .primary(.ok),
             .primary(.search),
             .primary(.return),
-            .shift(currentCasing: .lowercased),
-            .shift(currentCasing: .uppercased),
-            .shift(currentCasing: .capsLocked),
+            .shift(.auto),
             .space,
             .systemSettings,
             .tab,

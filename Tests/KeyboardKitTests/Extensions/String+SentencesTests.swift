@@ -3,29 +3,15 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2020-12-28.
-//  Copyright © 2020-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2020-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS)
 import KeyboardKit
-import MockingKit
 import XCTest
 
 class String_SentencesTests: XCTestCase {
     
-    func testStringDefinesSentenceDelimiters() {
-        let delimiters = String.sentenceDelimiters
-        let expected = ["!", ".", "?"]
-        XCTAssertEqual(delimiters, expected)
-        XCTAssertEqual([String].sentenceDelimiters, delimiters)
-    }
-
-    func testStringCanIdentifyAsSentenceDelimiter() {
-        let result = String.sentenceDelimiters.map { $0.isSentenceDelimiter }
-        XCTAssertTrue(result.allSatisfy { $0 })
-        XCTAssertFalse("a".isSentenceDelimiter)
-    }
-
     func testIsLastSentenceEnded() {
         XCTAssertFalse("some text".isLastSentenceEnded)
         XCTAssertFalse("some text ".isLastSentenceEnded)
@@ -60,13 +46,13 @@ class String_SentencesTests: XCTestCase {
 
     func testLastSentence() {
         testLastSentence(in: "", expected: nil)
-        testLastSentence(in: "sentence", expected: nil)
-        testLastSentence(in: "sentence.", expected: "sentence")
-        testLastSentence(in: "sentence!", expected: "sentence")
-        testLastSentence(in: " sentence .", expected: " sentence ")
+        testLastSentence(in: "sentence", expected: "sentence")
+        testLastSentence(in: "sentence.", expected: "sentence.")
+        testLastSentence(in: "sentence!", expected: "sentence!")
+        testLastSentence(in: " sentence .", expected: "sentence.")
         testLastSentence(in: "sentence. ", expected: nil)
-        testLastSentence(in: "sentence. a", expected: nil)
-        testLastSentence(in: "sentence.a", expected: nil)
+        testLastSentence(in: "sentence. a", expected: "a")
+        testLastSentence(in: "sentence.a", expected: "a")
     }
 }
 #endif

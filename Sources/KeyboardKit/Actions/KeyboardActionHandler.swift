@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-04-24.
-//  Copyright © 2019-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2019-2025 Daniel Saidi. All rights reserved.
 //
 
 import CoreGraphics
@@ -19,14 +19,10 @@ import CoreGraphics
 /// KeyboardKit will automatically setup a standard protocol
 /// implementation in ``KeyboardInputViewController/services``
 /// when the keyboard is launched. You can change or replace
-/// it at any time to customize the keyboard action behavior.
-///
-/// See <doc:Actions-Article> for more information.
+/// it at any time to customize the keyboard action handling.
 public protocol KeyboardActionHandler: AnyObject, FeedbackService {
-    
-    @available(*, deprecated, message: "Just use Keyboard.Gesture from now on")
-    typealias Gesture = Keyboard.Gesture
-    
+
+
     /// Whether the handler can handle an action gesture.
     func canHandle(
         _ gesture: Keyboard.Gesture,
@@ -48,7 +44,7 @@ public protocol KeyboardActionHandler: AnyObject, FeedbackService {
     func handle(
         _ suggestion: Autocomplete.Suggestion
     )
-    
+
     /// Handle a certain keyboard action drag gesture.
     func handleDrag(
         on action: KeyboardAction,
@@ -61,4 +57,21 @@ public protocol KeyboardActionHandler: AnyObject, FeedbackService {
         for gesture: Keyboard.Gesture,
         on action: KeyboardAction
     )
+}
+
+public extension KeyboardActionHandler {
+
+    /// Handle a certain keyboard action.
+    func handle(
+        action: KeyboardAction
+    ) {
+        handle(action)
+    }
+
+    /// Handle a certain autocomplete suggestion.
+    func handle(
+        suggestion: Autocomplete.Suggestion
+    ) {
+        handle(suggestion)
+    }
 }

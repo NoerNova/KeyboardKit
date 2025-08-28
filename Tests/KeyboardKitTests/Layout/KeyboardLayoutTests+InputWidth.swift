@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-02-08.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import XCTest
@@ -25,7 +25,7 @@ class KeyboardLayoutTests_InputWidth: XCTestCase {
 
     func testInputWidthReturnsCachedResultIfOneExists() {
         let layout = KeyboardLayout(itemRows: [])
-        layout.widthCache[123] = 456
+        layout.widthCache.data[123] = 456
         XCTAssertEqual(layout.inputWidth(for: 123), 456)
     }
 

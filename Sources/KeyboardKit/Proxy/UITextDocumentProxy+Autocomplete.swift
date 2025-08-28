@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-03-18.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS) || os(visionOS)
@@ -30,7 +30,10 @@ public extension UITextDocumentProxy {
         _ suggestion: Autocomplete.Suggestion,
         tryInsertSpace: Bool = true
     ) {
-        replaceCurrentWordPreCursorPart(with: suggestion.text)
+        replaceCurrentWordPreCursorPart(
+            with: suggestion.text,
+            additionalDeletionCount: suggestion.additionalDeleteCount
+        )
         guard tryInsertSpace else { return }
         tryInsertSpaceAfterAutocomplete()
     }

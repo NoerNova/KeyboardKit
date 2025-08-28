@@ -1,34 +1,40 @@
 //
-//  Callouts+ButtonArea.swift
+//  Callouts+ActionCalloutButtonArea.swift
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2024-04-10.
-//  Copyright © 2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2024-2025 Daniel Saidi. All rights reserved.
 //
 
 import SwiftUI
 
 public extension Callouts.ActionCallout {
-    
+
     /// This view is used to cover the part of a button that
     /// was tapped or pressed to trigger the callout.
+    ///
+    /// This view requires a button corner radius, since the
+    /// style can't provide a dynamic radius.
     struct ButtonArea: View {
         
         /// Create a callout button area.
         ///
         /// - Parameters:
         ///   - frame: The button area frame.
+        ///   - buttonCornerRadius: The button corner radius.
         public init(
-            frame: CGRect
+            frame: CGRect,
+            buttonCornerRadius: Double
         ) {
             self.frame = frame
-            self.initStyle = nil
+            self.buttonCornerRadius = buttonCornerRadius
         }
         
         private let frame: CGRect
-        
-        @Environment(\.calloutStyle)
-        private var envStyle
+        private let buttonCornerRadius: Double
+
+        @Environment(\.keyboardCalloutStyle)
+        private var style
         
         public var body: some View {
             HStack(alignment: .top, spacing: 0) {
@@ -37,32 +43,21 @@ public extension Callouts.ActionCallout {
                 calloutCurveTrailing
             }
         }
-        
-        // MARK: - Deprecated
-        
-        @available(*, deprecated, message: "Use .calloutStyle to apply the style instead.")
-        public init(
-            frame: CGRect,
-            style: Callouts.CalloutStyle = .standard
-        ) {
-            self.frame = frame
-            self.initStyle = style
-        }
-        
-        private typealias Style = Callouts.CalloutStyle
-        private let initStyle: Style?
-        private var style: Style { initStyle ?? envStyle }
     }
 }
 
 private extension Callouts.ActionCallout.ButtonArea {
-    
-    var backgroundColor: Color { style.backgroundColor }
-    var cornerRadius: CGFloat { style.buttonCornerRadius }
-    var curveSize: CGSize { style.curveSize }
-    
+
+    var backgroundColor: Color {
+        style.backgroundColor
+    }
+
+    var curveSize: CGSize {
+        style.curveSize
+    }
+
     var buttonBody: some View {
-        CustomRoundedRectangle(bottomLeft: cornerRadius, bottomRight: cornerRadius)
+        CustomRoundedRectangle(bottomLeft: buttonCornerRadius, bottomRight: buttonCornerRadius)
             .foregroundColor(backgroundColor)
             .frame(width: frame.size.width, height: frame.size.height)
     }
@@ -81,20 +76,24 @@ private extension Callouts.ActionCallout.ButtonArea {
 }
 
 private extension Callouts.ActionCallout.ButtonArea {
-    
+
     struct LeadingCurve: Shape {
         
         public func path(in rect: CGRect) -> Path {
             var path = Path()
             guard rect.isValidForPath else { return path }
-            let topTrailing = CGPoint(x: rect.maxX, y: rect.minY)
+            let topTrailing = CGPoint(x: rect.maxX+10, y: rect.minY)
             let topLeading = CGPoint(x: rect.minX, y: rect.minY - 20)
             let btmLeading = CGPoint(x: rect.minX, y: rect.minY - 10)
             let btmTrailing = CGPoint(x: rect.maxX, y: rect.maxY + 10)
             path.move(to: topTrailing)
             path.addLine(to: topLeading)
             path.addLine(to: btmLeading)
-            path.addCurve(to: btmTrailing, control1: .init(x: 0, y: 5), control2: .init(x: rect.maxX, y: rect.minY))
+            path.addCurve(
+                to: btmTrailing,
+                control1: .init(x: 0, y: 5),
+                control2: .init(x: rect.maxX, y: rect.minY)
+            )
             path.addLine(to: topTrailing)
             return path
         }
@@ -110,7 +109,11 @@ private extension Callouts.ActionCallout.ButtonArea {
             let btmLeading = CGPoint(x: rect.minX, y: rect.maxY)
             path.move(to: topLeading)
             path.addLine(to: topTrailing)
-            path.addCurve(to: btmLeading, control1: .zero, control2: .init(x: 0, y: rect.maxY))
+            path.addCurve(
+                to: btmLeading,
+                control1: .zero,
+                control2: .init(x: 0, y: rect.maxY)
+            )
             path.addLine(to: topLeading)
             return path
         }
@@ -118,18 +121,26 @@ private extension Callouts.ActionCallout.ButtonArea {
 }
 
 #Preview {
-    
+
     VStack(alignment: .leading, spacing: 0) {
         RoundedRectangle(cornerRadius: 10)
             .fill(.white)
             .frame(height: 80)
-        Callouts.ActionCallout.ButtonArea(
-            frame: CGRect(x: 0, y: 0, width: 50, height: 50)
-        )
+        HStack {
+            Callouts.ActionCallout.ButtonArea(
+                frame: CGRect(x: 0, y: 0, width: 50, height: 50),
+                buttonCornerRadius: 10
+            )
+            Spacer()
+            Callouts.ActionCallout.ButtonArea(
+                frame: CGRect(x: 0, y: 0, width: 100, height: 50),
+                buttonCornerRadius: 20
+            ).rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+        }
     }
-    
-    .padding(30)
-    .background(Color.gray)
+    .padding()
+    .background(Color.keyboardBackground)
     .cornerRadius(20)
-    .calloutStyle(.preview1)
+    .keyboardCalloutStyle(.standard)
+    .padding()
 }

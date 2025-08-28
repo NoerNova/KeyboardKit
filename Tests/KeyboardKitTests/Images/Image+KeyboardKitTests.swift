@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2020-06-22.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import KeyboardKit
@@ -37,7 +37,8 @@ class Image_KeyboardKitTests: XCTestCase {
         XCTAssertEqual(result(for: .keyboardOption), Image(systemName: "option"))
         XCTAssertEqual(result(for: .keyboardRedo), Image(systemName: "arrow.uturn.right"))
         XCTAssertEqual(result(for: .keyboardSettings), Image(systemName: "gearshape"))
-        XCTAssertEqual(result(for: .keyboardShiftCapslocked), Image(systemName: "capslock.fill"))
+        XCTAssertEqual(result(for: .keyboardShiftCapslockActive), Image(systemName: "capslock.fill"))
+        XCTAssertEqual(result(for: .keyboardShiftCapslockInactive), Image(systemName: "capslock"))
         XCTAssertEqual(result(for: .keyboardShiftLowercased), Image(systemName: "shift"))
         XCTAssertEqual(result(for: .keyboardShiftUppercased), Image(systemName: "shift.fill"))
         XCTAssertEqual(result(for: .keyboardTab), Image(systemName: "arrow.right.to.line"))

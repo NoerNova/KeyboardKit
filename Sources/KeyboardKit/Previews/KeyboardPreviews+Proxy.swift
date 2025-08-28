@@ -3,23 +3,23 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-01-25.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS) || os(visionOS)
 import UIKit
 
-public extension UITextDocumentProxy where Self == KeyboardPreviews.PreviewTextDocumentProxy {
-    
+public extension UITextDocumentProxy where Self == KeyboardPreviews.TextDocumentProxy {
+
     static var preview: UITextDocumentProxy {
-        KeyboardPreviews.PreviewTextDocumentProxy()
+        KeyboardPreviews.TextDocumentProxy()
     }
 }
 
 public extension KeyboardPreviews {
     
-    class PreviewTextDocumentProxy: NSObject, UITextDocumentProxy {
-        
+    class TextDocumentProxy: NSObject, UITextDocumentProxy {
+
         public override init() {
             super.init()
         }

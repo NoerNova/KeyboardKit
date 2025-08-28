@@ -1,103 +1,113 @@
 import Foundation
 import SwiftUI
 
-public extension InputSet {
-
-    @available(*, deprecated, renamed: "numeric")
-    static func standardNumeric(currency: String) -> InputSet {
-        numeric(currency: currency)
-    }
-
-    @available(*, deprecated, renamed: "symbolic")
-    static func standardSymbolic(currencies: [String]) -> InputSet {
-        symbolic(currencies: currencies)
-    }
-}
-
+@available(*, deprecated, renamed: "KeyboardLayout.InputSet")
+public typealias InputSet = KeyboardLayout.InputSet
 
 public extension KeyboardLayout {
     
-    @available(*, deprecated, renamed: "hasKeyboardSwitcher(_:)")
-    func hasKeyboardSwitcher(for type: Keyboard.KeyboardType) -> Bool {
-        itemRows.hasKeyboardSwitcher(type)
-    }
-
-    @available(*, deprecated, renamed: "KeyboardLayout.BaseService")
-    typealias BaseProvider = KeyboardLayout.BaseService
-
-    @available(*, deprecated, renamed: "KeyboardLayout.DeviceBasedService")
-    typealias DeviceBasedProvider = KeyboardLayout.DeviceBasedService
-
-    @available(*, deprecated, renamed: "KeyboardLayout.DisabledService")
-    typealias DisabledProvider = KeyboardLayout.DisabledService
-
-    @available(*, deprecated, renamed: "KeyboardLayout.iPadService")
-    typealias iPadProvider = KeyboardLayout.iPadService
-
-    @available(*, deprecated, renamed: "KeyboardLayout.iPhoneService")
-    typealias iPhoneProvider = KeyboardLayout.iPhoneService
-
-    @available(*, deprecated, renamed: "KeyboardLayout.StandardService")
-    typealias StandardProvider = KeyboardLayout.StandardService
-
-}
-
-public extension KeyboardLayout.DeviceBasedService {
-
-    @available(*, deprecated, renamed: "iPadService")
-    var iPadProvider: KeyboardLayoutService {
-        get { iPadService }
-        set { iPadService = newValue }
-    }
-
-    @available(*, deprecated, renamed: "iPhoneService")
-    var iPhoneProvider: KeyboardLayoutService {
-        get { iPhoneService }
-        set { iPhoneService = newValue }
-    }
-}
-
-@available(*, deprecated, renamed: "KeyboardLayoutRowIdentifiable")
-public typealias KeyboardLayoutRowItem = KeyboardLayoutRowIdentifiable
-
-@available(*, deprecated, renamed: "KeyboardLayoutIdentifiable")
-public typealias KeyboardLayoutRowIdentifiable = KeyboardLayoutIdentifiable
-
-@available(*, deprecated, renamed: "KeyboardLayoutService")
-public typealias KeyboardLayoutProvider = KeyboardLayoutService
-
-@available(*, deprecated, renamed: "KeyboardLayoutServiceProxy")
-public typealias KeyboardLayoutProviderProxy = KeyboardLayoutServiceProxy
-
-public extension KeyboardLayoutServiceProxy {
-
-    @available(*, deprecated, renamed: "iPadService")
-    var iPadProvider: KeyboardLayoutService { iPadService }
-
-    @available(*, deprecated, renamed: "iPhoneService")
-    var iPhoneProvider: KeyboardLayoutService { iPhoneService }
-}
-
-public extension KeyboardLayout.Configuration {
-    
-    @available(*, deprecated, renamed: "init(buttonCornerRadius:buttonInsets:rowHeight:inputToolbarHeight:)")
+    @available(*, deprecated, renamed: "init(itemRows:ipadProLayout:idealItemHeight:idealItemInsets:inputToolbarInputSet:)")
     init(
-        buttonCornerRadius: Double,
-        buttonInsets: EdgeInsets,
-        rowHeight: Double,
-        numberToolbarHeight: Double
+        itemRows: ItemRows,
+        iPadProLayout: Bool = false,
+        idealItemHeight: Double? = nil,
+        idealItemInsets: EdgeInsets? = nil,
+        numberInputToolbarInputSet: InputSet
     ) {
         self.init(
-            buttonCornerRadius: buttonCornerRadius,
-            buttonInsets: buttonInsets,
-            rowHeight: rowHeight,
-            inputToolbarHeight: numberToolbarHeight
+            itemRows: itemRows,
+            iPadProLayout: iPadProLayout,
+            idealItemHeight: idealItemHeight,
+            idealItemInsets: idealItemInsets,
+            inputToolbarInputSet: numberInputToolbarInputSet
         )
     }
-    
-    @available(*, deprecated, renamed: "inputToolbarHeight")
-    var numberToolbarHeight: Double {
-        get { inputToolbarHeight }
-        set { inputToolbarHeight = newValue }
+
+    @available(*, deprecated, renamed: "inputToolbarInputSet")
+    var numberInputToolbarInputSet: InputSet? {
+        get { inputToolbarInputSet }
+        set { inputToolbarInputSet = newValue }
     }
+}
+
+public extension KeyboardLayout {
+    
+    @available(*, deprecated, renamed: "DeviceConfiguration")
+    typealias Configuration = DeviceConfiguration
+}
+
+public extension KeyboardLayout {
+
+    @available(*, deprecated, renamed: "isIpadProLayout")
+    var ipadProLayout: Bool {
+        get { isIpadProLayout }
+        set { isIpadProLayout = newValue }
+    }
+}
+
+public extension KeyboardLayout.DeviceConfiguration {
+
+    @available(*, deprecated, message: "Use the configuration height instead.")
+    static var standardPadRowHeight: Double { 64.0 }
+
+    @available(*, deprecated, message: "Use the configuration height instead.")
+    static var standardPadLandscapeRowHeight: Double { 86.0 }
+
+    @available(*, deprecated, message: "Use the configuration height instead.")
+    static var standardPadProLargeRowHeight: Double { 69.0 }
+
+    @available(*, deprecated, message: "Use the configuration height instead.")
+    static var standardPadProLargeLandscapeRowHeight: Double { 88.0 }
+
+    @available(*, deprecated, message: "Use the configuration height instead.")
+    static var standardPhoneRowHeight: Double { 54 }      /// !
+
+    @available(*, deprecated, message: "Use the configuration height instead.")
+    static var standardPhoneLandscapeRowHeight: Double { 40.0 }
+
+    @available(*, deprecated, message: "Use the configuration height instead.")
+    static var standardPhoneProMaxRowHeight: Double { 56.0 }
+
+    @available(*, deprecated, message: "Use the configuration height instead.")
+    static var standardPhoneProMaxLandscapeRowHeight: Double { 40.0 }
+
+
+    @available(*, deprecated, renamed: "standardPadLarge")
+    static var standardPadProLarge = standardPadLarge
+
+    @available(*, deprecated, renamed: "standardPadLargeLandscape")
+    static var standardPadProLargeLandscape = standardPadLargeLandscape
+
+    @available(*, deprecated, renamed: "standardPhoneLarge")
+    static var standardPhoneProMax = standardPhoneLarge
+
+    @available(*, deprecated, renamed: "standardPhoneLargeLandscape")
+    static var standardPhoneProMaxLandscape = standardPhoneLargeLandscape
+}
+
+public extension CGSize {
+
+    @available(*, deprecated, renamed: "iPadLargeScreen")
+    static let iPadProLargeScreenPortrait = iPadLargeScreen
+
+    @available(*, deprecated, renamed: "iPadLargeScreenLandscape")
+    static let iPadProLargeScreenLandscape = iPadLargeScreenLandscape
+
+    @available(*, deprecated, renamed: "iPhoneLargeScreen")
+    static let iPhoneProMaxScreenPortrait = iPhoneLargeScreen
+
+    @available(*, deprecated, renamed: "iPhoneLargeScreenLandscape")
+    static let iPhoneProMaxScreenLandscape = iPhoneLargeScreenLandscape
+
+    @available(*, deprecated, message: "This will be removed in KeyboardKit 10.")
+    static let iPadProSmallScreenPortrait = CGSize(width: 834, height: 1194)
+
+    @available(*, deprecated, message: "This will be removed in KeyboardKit 10.")
+    static let iPadProSmallScreenLandscape = iPadProSmallScreenPortrait.flipped()
+
+    @available(*, deprecated, message: "This will be removed in KeyboardKit 10.")
+    static let iPadScreenPortrait = CGSize(width: 768, height: 1024)
+
+    @available(*, deprecated, message: "This will be removed in KeyboardKit 10.")
+    static let iPadScreenLandscape = iPadScreenPortrait.flipped()
 }

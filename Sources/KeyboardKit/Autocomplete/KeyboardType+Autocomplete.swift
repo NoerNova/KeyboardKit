@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2022-12-12.
-//  Copyright © 2022-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2022-2025 Daniel Saidi. All rights reserved.
 //
 
 public extension Keyboard.KeyboardType {
@@ -13,19 +13,22 @@ public extension Keyboard.KeyboardType {
     /// Use both ``Keyboard/KeyboardType`` & `UIKeyboardType`
     /// to compute this, since many native keyboard types do
     /// not map to a corresponding ``Keyboard/KeyboardType``.
-    /// This means that a `.URL` keyboard type (which should
-    /// not use autocomplete) is rendered as an `.alphabetic`
-    /// keyboard (which by default does). Both should prefer
-    /// autocomplete for it to be used.
+    ///
+    /// > Important: Since KeyboardKit by default always has
+    /// an autocomplete toolbar, the property is used to set
+    /// if *autocorrect* is contextually enabled.
     var prefersAutocomplete: Bool {
         switch self {
         case .alphabetic: true
-        case .numeric: true
-        case .symbolic: true
         case .email: false
         case .emojis: false
+        case .emojiSearch: false
         case .images: false
         case .numberPad: true
+        case .numeric: true
+        case .symbolic: true
+        case .url: false
+        case .webSearch: false
         case .custom: true
         }
     }
@@ -41,10 +44,10 @@ public extension UIKeyboardType {
     /// Use both ``Keyboard/KeyboardType`` & `UIKeyboardType`
     /// to compute this, since many native keyboard types do
     /// not map to a corresponding ``Keyboard/KeyboardType``.
-    /// This means that a `.URL` keyboard type (which should
-    /// not use autocomplete) is rendered as an `.alphabetic`
-    /// keyboard (which by default does). Both should prefer
-    /// autocomplete for it to be used.
+    ///
+    /// > Important: Since KeyboardKit by default always has
+    /// an autocomplete toolbar, the property is used to set
+    /// if *autocorrect* is contextually enabled.
     var prefersAutocomplete: Bool {
         switch self {
         case .default: true

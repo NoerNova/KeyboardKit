@@ -3,15 +3,17 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-02-18.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
-#if os(iOS) || os(tvOS) || os(visionOS)
 import Foundation
 import Combine
-import UIKit
 
-/// This class has observable, keybpard status-related state.
+#if os(iOS) || os(tvOS) || os(visionOS)
+import UIKit
+#endif
+
+/// This class has observable, keyboard status-related state.
 ///
 /// This class can be used to check if a keyboard is enabled
 /// in System Settings, if Full Access is enabled, etc.
@@ -42,6 +44,7 @@ public class KeyboardStatusContext: KeyboardStatusInspector, ObservableObject {
     ) {
         self.bundleId = bundleId
         self.notificationCenter = notificationCenter
+        #if os(iOS) || os(tvOS) || os(visionOS)
         activePublisher
             .sink(receiveValue: { [weak self] _ in self?.refresh() })
             .store(in: &cancellables)
@@ -49,6 +52,7 @@ public class KeyboardStatusContext: KeyboardStatusInspector, ObservableObject {
             .delay(for: 0.5, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] _ in self?.refresh() })
             .store(in: &cancellables)
+        #endif
         refresh()
     }
 
@@ -58,17 +62,26 @@ public class KeyboardStatusContext: KeyboardStatusInspector, ObservableObject {
     private let notificationCenter: NotificationCenter
 
     /// Whether the keyboard extension is actively used.
-    @Published
-    public var isKeyboardActive: Bool = false
+    @Published public var isKeyboardActive: Bool = false
 
     /// Whether the keyboard extension has been enabled.
-    @Published
-    public var isKeyboardEnabled: Bool = false
+    @Published public var isKeyboardEnabled: Bool = false
 
     /// Refresh the observable state.
     public func refresh() {
+        #if os(iOS) || os(tvOS) || os(visionOS)
         isKeyboardActive = isKeyboardActive(withBundleId: bundleId)
         isKeyboardEnabled = isKeyboardEnabled(withBundleId: bundleId)
+        #endif
+    }
+}
+
+#if os(iOS) || os(tvOS) || os(visionOS)
+public extension KeyboardStatusContext {
+
+    /// Whether Full Access is enabled in System Settings.
+    var isFullAccessEnabled: Bool {
+        UIInputViewController().hasFullAccess
     }
 }
 

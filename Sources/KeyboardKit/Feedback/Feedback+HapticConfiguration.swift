@@ -3,69 +3,58 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-10-15.
-//  Copyright © 2019-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2019-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
 
 public extension Feedback {
-    
+
     /// This struct can be used to configure haptic feedback.
     ///
     /// You can use any of the standard configurations, like
-    /// ``enabled`` and ``disabled``, or create a custom one.
-    ///
-    /// Note that this library uses ``minimal`` as a default
-    /// configuration.
-    struct HapticConfiguration: Codable, Equatable {
+    /// ``standard`` and ``disabled``, or create custom ones.
+    struct HapticConfiguration: KeyboardModel {
         
         /// Create a custom haptic feedback configuration.
         ///
         /// - Parameters:
-        ///   - press: The feedback to use for presses, by default `.none`.
-        ///   - release: The feedback to use for releases, by default `.none`.
+        ///   - press: The feedback to use for presses, by default `.selectionChanged`.
+        ///   - release: The feedback to use for releases, by default `.selectionChanged`.
         ///   - doubleTap: The feedback to use for double taps, by default `.none`.
-        ///   - longPress: The feedback to use for long presses, by default `.none`.
-        ///   - longPressOnSpace: The feedback to use for long presses on space, by default `.mediumImpact`.
-        ///   - repeat: The feedback to use for repeat, by default `.none`.
+        ///   - longPress: The feedback to use for long presses, by default `.mediumImpact`.
+        ///   - repeat: The feedback to use for repeat, by default `.selectionChanged`.
         ///   - custom: A list of custom feedback, by default `empty`.
         public init(
-            press: Feedback.Haptic = .none,
-            release: Feedback.Haptic = .none,
-            doubleTap: Feedback.Haptic = .none,
-            longPress: Feedback.Haptic = .none,
-            longPressOnSpace: Feedback.Haptic = .mediumImpact,
-            repeat: Feedback.Haptic = .none,
+            press: Haptic = .selectionChanged,
+            release: Haptic = .selectionChanged,
+            doubleTap: Haptic = .none,
+            longPress: Haptic = .mediumImpact,
+            repeat: Haptic = .selectionChanged,
             custom: [CustomFeedback] = []
         ) {
             self.press = press
             self.release = release
             self.doubleTap = doubleTap
             self.longPress = longPress
-            self.longPressOnSpace = longPressOnSpace
             self.repeat = `repeat`
-            self.custom = custom + [
-                .haptic(longPressOnSpace, for: .longPress, on: .space)
-            ]
+            self.custom = custom
         }
         
         /// The feedback to use for presses.
-        public var press: Feedback.Haptic
+        public var press: Haptic
         
         /// The feedback to use for releases.
-        public var release: Feedback.Haptic
+        public var release: Haptic
         
         /// The feedback to use for double taps.
-        public var doubleTap: Feedback.Haptic
+        public var doubleTap: Haptic
         
         /// The feedback to use for long presses.
-        public var longPress: Feedback.Haptic
-        
-        /// The feedback to use for long presses on space.
-        public var longPressOnSpace: Feedback.Haptic
+        public var longPress: Haptic
         
         /// The feedback to use for repeat.
-        public var `repeat`: Feedback.Haptic
+        public var `repeat`: Haptic
         
         /// A list of custom haptic feedback.
         public var custom: [CustomFeedback]
@@ -73,9 +62,24 @@ public extension Feedback {
 }
 
 public extension Feedback.HapticConfiguration {
-    
+
+    /// A standard, enabled haptic configuration.
+    static let standard = Self()
+
+    /// This configuration disables all haptic feedback.
+    static let disabled = Self(
+        press: .none,
+        release: .none,
+        doubleTap: .none,
+        longPress: .none,
+        repeat: .none
+    )
+}
+
+public extension Feedback.HapticConfiguration {
+
     /// This struct is used for custom haptic feedback.
-    struct CustomFeedback: Codable, Equatable {
+    struct CustomFeedback: KeyboardModel {
         
         public init(
             action: KeyboardAction,
@@ -94,7 +98,7 @@ public extension Feedback.HapticConfiguration {
 }
 
 public extension Feedback.HapticConfiguration.CustomFeedback {
-    
+
     /// Create a custom haptic feedback configuration.
     static func haptic(
         _ feedback: Feedback.Haptic,
@@ -106,7 +110,7 @@ public extension Feedback.HapticConfiguration.CustomFeedback {
 }
 
 public extension Feedback.HapticConfiguration {
-    
+
     /// Get a custom registered feedback, if any.
     func customFeedback(
         for gesture: Keyboard.Gesture,
@@ -142,31 +146,8 @@ public extension Feedback.HapticConfiguration {
     }
 }
 
-public extension Feedback.HapticConfiguration {
-    
-    /// This configuration enables all haptic feedback.
-    static let enabled = Self(
-        press: .lightImpact,
-        release: .lightImpact,
-        doubleTap: .lightImpact,
-        longPress: .mediumImpact,
-        longPressOnSpace: .mediumImpact,
-        repeat: .selectionChanged
-    )
-    
-    /// This configuration disables all haptic feedback.
-    static let disabled = Self(
-        press: .none,
-        release: .none,
-        doubleTap: .none,
-        longPress: .none,
-        longPressOnSpace: .mediumImpact,
-        repeat: .none
-    )
-}
-
 private extension Feedback.HapticConfiguration {
-    
+
     /// Get the feedback to use for a certain gesture.
     func feedback(
         for gesture: Keyboard.Gesture

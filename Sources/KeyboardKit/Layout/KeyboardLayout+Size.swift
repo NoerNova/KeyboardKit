@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-02-03.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
@@ -23,9 +23,9 @@ public extension KeyboardLayout {
     func inputWidth(
         for totalWidth: TotalWidth
     ) -> Double {
-        if let result = widthCache[totalWidth] { return result }
+        if let result = widthCache.data[totalWidth] { return result }
         let result = itemRows.inputWidth(for: totalWidth)
-        widthCache[totalWidth] = result
+        widthCache.data[totalWidth] = result
         return result
     }
 }

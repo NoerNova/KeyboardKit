@@ -3,12 +3,11 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-07-14.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS)
 import UIKit
-import MockingKit
 
 class MockTextInput: UIResponder, Mockable, UITextInput {
     

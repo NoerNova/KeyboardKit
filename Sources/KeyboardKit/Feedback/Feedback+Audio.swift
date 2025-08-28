@@ -3,23 +3,20 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-10-15.
-//  Copyright © 2019-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2019-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
 
 public extension Feedback {
-    
+
     /// This enum defines standard audio feedback types.
-    ///
-    /// Use a ``FeedbackService`` or ``KeyboardActionHandler``
-    /// to trigger audio feedback.
     ///
     /// Audio feedback has a unique system id that refers to
     /// system sounds. You can use ``customId(_:)`` to add a
     /// custom ID-based feedback type, and ``customUrl(_:)``
     /// to add custom audio feedback from any URL-based file.
-    enum Audio: Codable, Equatable, Identifiable {
+    enum Audio: Identifiable, KeyboardModel {
         
         /// Represents the sound of an input key.
         case input
@@ -42,7 +39,7 @@ public extension Feedback {
 }
 
 public extension Feedback.Audio {
-    
+
     /// The unique system sound identifier.
     var id: UInt32? {
         switch self {

@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-07-04.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
@@ -18,7 +18,12 @@ public extension KeyboardAction {
 }
 
 public extension KeyboardAction.Row {
-    
+
+    /// Map a string's characters to a keyboard action row.
+    init(characters: String) {
+        self = characters.map { .character(String($0)) }
+    }
+
     /// Map a string array to a keyboard action row.
     init(characters: [String]) {
         self = characters.map { .character($0) }
@@ -35,7 +40,9 @@ public extension KeyboardAction.Row {
     }
 
     /// Get a matching character margin action for an action.
-    func characterMarginAction(for action: KeyboardAction?) -> KeyboardAction {
+    func characterMarginAction(
+        for action: KeyboardAction?
+    ) -> KeyboardAction {
         switch action {
         case .character(let char): .characterMargin(char)
         default: .none
@@ -44,7 +51,7 @@ public extension KeyboardAction.Row {
 }
 
 public extension KeyboardAction.Rows {
-    
+
     /// Map a string array array to keyboard action rows.
     init(characters: [[String]]) {
         self = characters.map {

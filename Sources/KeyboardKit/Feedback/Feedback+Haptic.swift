@@ -3,18 +3,15 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2019-04-26.
-//  Copyright © 2019-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2019-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
 
 public extension Feedback {
-    
+
     /// This enum defines standard haptic feedback types.
-    ///
-    /// Use a ``FeedbackService`` or ``KeyboardActionHandler``
-    /// to trigger haptic feedback.
-    enum Haptic: String, CaseIterable, Codable, Equatable, Identifiable {
+    enum Haptic: String, CaseIterable, Identifiable, KeyboardModel {
         
         /// Represents feedback for an error event.
         case error
@@ -46,13 +43,7 @@ public extension Feedback {
 }
 
 public extension Feedback.Haptic {
-    
-    /// A ``Feedback/Haptic/selectionChanged`` shorthand.
-    static let selection = selectionChanged
-}
 
-public extension Feedback.Haptic {
-    
     /// The unique feedback identifier.
     var id: String { rawValue }
 }

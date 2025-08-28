@@ -3,44 +3,21 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2020-12-28.
-//  Copyright © 2020-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2020-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
 
 public extension String {
- 
-    /// A list of mutable, western sentence delimiters.
-    static var sentenceDelimiters = ["!", ".", "?"]
-    
-    /// Whether or not this is a western sentence delimiter.
-    var isSentenceDelimiter: Bool {
-        Self.sentenceDelimiters.contains(self)
-    }
-}
 
-public extension Collection where Element == String {
-
-    /// A list of mutable western sentence delimiters.
-    static var sentenceDelimiters: [String] { String.sentenceDelimiters }
-}
-
-
-public extension String {
-
-    /**
-     Check whether or not the last character within a string
-     is a sentence delimiter.
-     */
+    /// Check if the last character is a sentence delimiter.
     var hasSentenceDelimiterSuffix: Bool {
         guard let last else { return false }
         return String(last).isSentenceDelimiter
     }
 
-    /**
-     Check whether or not the last sentence in the string is
-     ended, with or without trailing whitespace.
-     */
+    /// Check if the last sentence is ended, with or without
+    /// trailing whitespace.
     var isLastSentenceEnded: Bool {
         let content = trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "\n", with: "")
         if content.isEmpty { return true }
@@ -48,10 +25,8 @@ public extension String {
         return lastCharacter.isSentenceDelimiter
     }
 
-    /**
-     Check whether or not the last sentence in the string is
-     ended with trailing whitespace.
-     */
+    /// Check if the last sentence is ended, with a trailing
+    /// whitespace sequence.
     var isLastSentenceEndedWithTrailingWhitespace: Bool {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         if isEmpty || trimmed.isEmpty { return true }
@@ -62,15 +37,14 @@ public extension String {
         return lastTrimmed.isSentenceDelimiter && isLastValid
     }
 
-    /**
-     Get the content of the last sentence, if any. Note that
-     it will not contain the sentence delimiter.
-     */
+    /// Get the trimmed content of the last sentence, if any.
     var lastSentence: String? {
-        guard isLastSentenceEnded else { return nil }
+        guard let lastCharacter = trimmingCharacters(in: .whitespacesAndNewlines).last else { return nil }
+        let lastChar = String(lastCharacter)
         let components = split(by: Self.sentenceDelimiters).filter { !$0.isEmpty }
-        let trimmed = components.last?.trimmingCharacters(in: .whitespaces)
-        let ignoreLast = trimmed?.count == 0
-        return ignoreLast ? nil : components.last
+        guard let trimmed = components.last?.trimmingCharacters(in: .whitespaces) else { return nil }
+        if trimmed.isEmpty { return nil }
+        let addLastChar = lastChar.isSentenceDelimiter
+        return addLastChar ? "\(trimmed)\(lastChar)" : trimmed
     }
 }

@@ -1,63 +1,83 @@
+import Foundation
 import SwiftUI
 
 public extension Keyboard {
     
-    @available(*, deprecated, renamed: "Services")
-    typealias KeyboardServices = Services
+    @available(*, deprecated, renamed: "Keyboard.Diacritic")
+    typealias Accent = Diacritic
     
-    @available(*, deprecated, renamed: "State")
-    typealias KeyboardState = State
+    @available(*, deprecated, renamed: "Keyboard.DiacriticInsertionResult")
+    typealias DiacriticResult = DiacriticInsertionResult
+    
+    @available(*, deprecated, renamed: "Keyboard.SpaceMenuType")
+    typealias SpaceContextMenu = SpaceMenuType
 }
 
-public extension KeyboardSettings {
+public extension Keyboard.ButtonStyle {
 
-    @available(*, deprecated, renamed: "Keyboard.SettingsLink")
-    typealias Link = Keyboard.SettingsLink
-}
-
-public extension Keyboard.State {
-
-    @available(*, deprecated, message: "Use the dictation context's keyboardConfiguration instead.")
-    var dictationConfig: Dictation.KeyboardConfiguration {
-        dictationContext.keyboardConfiguration
+    @available(*, deprecated, renamed: "standard(for:action:isPressed:)")
+    static func standard(
+        for action: KeyboardAction,
+        context: KeyboardContext,
+        isPressed: Bool
+    ) -> Keyboard.ButtonStyle {
+        action.standardButtonStyle(for: context, isPressed: isPressed)
     }
 }
 
-@available(*, deprecated, renamed: "Keyboard.BottomRow")
-public struct KeyboardViewBottomRow {}
+public extension Keyboard.DiacriticInsertionResult {
+    
+    @available(*, deprecated, renamed: "deleteBackwardsCount")
+    var removeLast: Bool { deleteBackwardsCount == 1 }
+    
+    @available(*, deprecated, renamed: "textInsertion")
+    var insert: String { textInsertion }
+}
 
-@available(*, deprecated, renamed: "Keyboard.ButtonPreview")
-public struct KeyboardViewButtonPreview {}
+public extension Keyboard.InputToolbarDisplayMode {
+    
+    @available(*, deprecated, renamed: "none")
+    static var hidden: Self { .none }
+    
+    @available(*, deprecated, renamed: "characters")
+    static func inputs(_ inputs: String) -> Self {
+        .characters(inputs)
+    }
+}
 
-@available(*, deprecated, renamed: "KeyboardView")
-public typealias SystemKeyboard = KeyboardView
+public extension Keyboard.SpaceLongPressBehavior {
+    
+    @available(*, deprecated, message: "Use Keyboard.SpaceContextMenu instead.")
+    static var moveInputCursorWithLocaleSwitcher: Self { .moveInputCursor }
+    
+    @available(*, deprecated, message: "Use Keyboard.SpaceContextMenu instead.")
+    var shouldAddTrailingLocaleContextMenu: Bool {
+        switch self {
+        case .moveInputCursor: false
+        case .openLocaleContextMenu: false
+        }
+    }
+}
 
-@available(*, deprecated, renamed: "KeyboardViewComponent")
-public typealias SystemKeyboardComponent = KeyboardViewComponent
+public extension KeyboardContext {
 
-@available(*, deprecated, renamed: "KeyboardViewItem")
-public typealias SystemKeyboardItem = KeyboardViewItem
+    @available(*, deprecated, message: "Use `settings.spaceLongPressBehavior` instead.")
+    var spaceLongPressBehavior: Keyboard.SpaceLongPressBehavior {
+        get { settings.spaceLongPressBehavior }
+        set { settings.spaceLongPressBehavior = newValue }
+    }
+}
 
 public extension View {
-    
-    @available(*, deprecated, renamed: "keyboardState(_:)")
-    func withEnvironment(fromState state: Keyboard.State) -> some View {
-        self.keyboardState(state)
-    }
 
-    #if os(iOS) || os(tvOS) || os(visionOS)
-    @available(*, deprecated, message: "Use the non-controller based modifier instead.")
-    func keyboardState(
-        from controller: KeyboardInputViewController
+    @available(*, deprecated, message: "Use keyboardSpaceContextMenuLeading and keyboardSpaceContextMenuTrailing instead.")
+    func keyboardSpaceContextMenu(
+        _ type: Keyboard.SpaceMenuType?,
+        edge: HorizontalEdge = .trailing
     ) -> some View {
-        self.keyboardState(controller.state)
+        switch edge {
+        case .leading: environment(\.keyboardSpaceContextMenuLeading, type)
+        case .trailing: environment(\.keyboardSpaceContextMenuTrailing, type)
+        }
     }
-
-    @available(*, deprecated, renamed: "keyboardState(from:)")
-    func withEnvironment(
-        fromController controller: KeyboardInputViewController
-    ) -> some View {
-        self.keyboardState(from: controller)
-    }
-    #endif
 }

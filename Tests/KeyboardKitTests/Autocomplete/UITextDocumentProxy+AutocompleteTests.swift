@@ -3,11 +3,10 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-03-18.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS)
-import MockingKit
 import KeyboardKit
 import XCTest
 
@@ -20,6 +19,7 @@ class UITextDocumentProxy_AutocompleteTests: XCTestCase {
 
     override func setUp() {
         proxy = MockTextDocumentProxy()
+        setupProxy("", "")
         suggestion = .init(text: word)
     }
 
@@ -37,12 +37,24 @@ class UITextDocumentProxy_AutocompleteTests: XCTestCase {
 
 
     func testAutocompleteInsertsWordAndSpaceInEmptyProxy() {
-        proxy.documentContextBeforeInput = ""
         applyAutocompleteWithMockAdjustments()
         let delete = proxy.calls(to: \.deleteBackwardRef)
         let insert = proxy.calls(to: \.insertTextRef)
         XCTAssertTrue(proxy.hasAutocompleteInsertedSpace)
         XCTAssertEqual(delete.count, 0)
+        XCTAssertEqual(insert.count, 2)
+        XCTAssertEqual(insert[0].arguments, word)
+        XCTAssertEqual(insert[1].arguments, " ")
+    }
+    
+    func testAutocompleteDeletesAdditionalCountBeforeInsertingWordAndSpaceInEmptyProxy() {
+        setupProxy(":abc", "def")
+        suggestion = .init(text: word, additionalDeleteCount: 1)
+        applyAutocompleteWithMockAdjustments()
+        let delete = proxy.calls(to: \.deleteBackwardRef)
+        let insert = proxy.calls(to: \.insertTextRef)
+        XCTAssertTrue(proxy.hasAutocompleteInsertedSpace)
+        XCTAssertEqual(delete.count, 4)
         XCTAssertEqual(insert.count, 2)
         XCTAssertEqual(insert[0].arguments, word)
         XCTAssertEqual(insert[1].arguments, " ")

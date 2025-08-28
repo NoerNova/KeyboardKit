@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2018-02-02.
-//  Copyright © 2018-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2018-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
@@ -21,12 +21,10 @@ import Foundation
 /// trigger actions with a ``KeyboardActionHandler``.
 ///
 /// The documentation for each action describes the standard
-/// behavior when using a ``KeyboardAction/StandardHandler``,
-/// with a ``Keyboard/StandardBehavior``.
-///
-/// Types that don't define any standard behaviors require a
-/// custom ``KeyboardActionHandler`` to be handled.
-public enum KeyboardAction: Codable, Equatable {
+/// behavior when using a ``StandardActionHandler``. Actions
+/// that don't have a standard behavior must be handled with
+/// a custom ``KeyboardActionHandler``.
+public enum KeyboardAction: KeyboardModel {
 
     /// Deletes backwards when pressed, and repeats until released.
     case backspace
@@ -57,10 +55,10 @@ public enum KeyboardAction: Codable, Equatable {
     
     /// Dismisses the keyboard when released.
     case dismissKeyboard
-    
+
     /// Inserts an emoji when released.
     case emoji(Emoji)
-    
+
     /// Represents an escape (esc) key.
     case escape
     
@@ -97,8 +95,14 @@ public enum KeyboardAction: Codable, Equatable {
     /// Represents a settings (⚙️) key.
     case settings
     
-    /// Changes keyboard to `.alphabetic(.uppercased)` when released and `.capslocked` when double tapped.
-    case shift(currentCasing: Keyboard.Case)
+    /// Changes keyboard case when released and double tapped.
+    ///
+    /// > Note: We currently need the current case, since it
+    /// is used for uniqueness. Without it, the keyboard key
+    /// isn't properly updated when the context case changes.
+    /// We should however try to find a way around it, since
+    /// the action should just be `shift`.
+    case shift(Keyboard.KeyboardCase)
     
     /// Inserts a space when released and can perform custom actions when long pressed.
     case space
@@ -116,28 +120,57 @@ public enum KeyboardAction: Codable, Equatable {
     case text(String)
 
     /// Open an url when released, using a custom id for identification.
-    case url(_ url: URL?, id: String? = nil)
+    case url(_ url: URL?, id: String?)
+
+    /// Inserts a period or a URL domain.
+    case urlDomain
 }
 
 public extension KeyboardAction {
-    
-    /// An `.emoji(_:)` shorthand that inserts an emoji when
-    /// released.
-    ///
-    /// > Note: This typealias is meant to make it easier to
-    /// find the ``KeyboardAction/diacritic(_:)`` action.
-    static func accent(
-        _ accent: Keyboard.Accent
+
+    /// An `character(_:)` shorthand.
+    static func character(
+        char: Character
     ) -> KeyboardAction {
-        .diacritic(accent)
+        .character(String(char))
     }
-    
-    /// An `.emoji(_:)` shorthand that inserts an emoji when
-    /// released.
+
+
+    /// An `emoji(_:)` shorthand.
     static func emoji(
         _ char: String
     ) -> KeyboardAction {
         .emoji(.init(char))
+    }
+
+    /// An ``KeyboardAction/url(_:id:)`` shorthand.
+    static func url(
+        _ url: URL?
+    ) -> KeyboardAction {
+        .url(url, id: nil)
+    }
+
+    /// An ``KeyboardAction/url(_:id:)`` shorthand.
+    static func url(
+        _ url: String?
+    ) -> KeyboardAction {
+        guard let url else { return .url(.init(string: ""), id: nil) }
+        return .url(.init(string: url), id: nil)
+    }
+
+    /// A list of URL domain-related actions.
+    static var urlDomainActions: [KeyboardAction] {
+        .urlDomainActions
+    }
+}
+
+public extension Collection where Element == KeyboardAction {
+
+    /// A list of URL domain-related actions.
+    static var urlDomainActions: [KeyboardAction] {
+        let string = ".com,.org,.edu,.net"
+        let domains = string.split(separator: ",").map(String.init)
+        return domains.map { .text($0) }
     }
 }
 
@@ -146,18 +179,50 @@ public extension KeyboardAction {
 
 public extension KeyboardAction {
 
+    /// A character margin action can add an extra tap area.
+    var characterMarginAction: KeyboardAction {
+        switch self {
+        case .character(let char): .characterMargin(char)
+        default: .none
+        }
+    }
+
     /// Whether or not the action is an alphabetic type.
     var isAlphabeticKeyboardTypeAction: Bool {
         switch self {
-        case .keyboardType(let type): type.isAlphabetic
+        case .keyboardType(let type): type == .alphabetic
         default: false
         }
     }
-    
+
     /// Whether or not the action is a character action.
     var isCharacterAction: Bool {
         switch self {
         case .character: true
+        default: false
+        }
+    }
+
+    /// Whether or not the action is a character action.
+    func isCharacterAction(for character: String) -> Bool {
+        switch self {
+        case .character(let char): char == character
+        default: false
+        }
+    }
+
+    /// Whether or not the action is a character margin.
+    var isCharacterMarginAction: Bool {
+        switch self {
+        case .characterMargin: true
+        default: false
+        }
+    }
+
+    /// Whether or not the action is a character margin.
+    func isCharacterMarginAction(for character: String) -> Bool {
+        switch self {
+        case .characterMargin(let char): char == character
         default: false
         }
     }
@@ -184,6 +249,7 @@ public extension KeyboardAction {
         case .space: true
         case .systemImage: true
         case .text: true
+        case .urlDomain: true
         default: false
         }
     }
@@ -241,62 +307,12 @@ public extension KeyboardAction {
         default: false
         }
     }
-    
-    /// Whether or not the action is uppercase shift.
-    var isUppercasedShiftAction: Bool {
-        switch self {
-        case .shift(let state): state.isUppercased
-        default: false
-        }
-    }
 
     /// Whether or not the action is a keyboard type action.
     func isKeyboardTypeAction(_ keyboardType: Keyboard.KeyboardType) -> Bool {
         switch self {
         case .keyboardType(let type): type == keyboardType
         default: false
-        }
-    }
-}
-
-
-// MARK: - Accessibility
-
-public extension KeyboardAction {
-    
-    /// The standard accessibility label for the action.
-    var standardAccessibilityLabel: String? {
-        switch self {
-        case .backspace: "Backspace"
-        case .capsLock: "Capslock"
-        case .character(let char): char
-        case .characterMargin: nil
-        case .command: "Command"
-        case .control: "Control"
-        case .custom(let name): name
-        case .diacritic(let val): val.char
-        case .dictation: "Dictation"
-        case .dismissKeyboard: "Dismiss Keyboard"
-        case .emoji(let emoji): "Emoji - \(emoji)"
-        case .escape: "Escape"
-        case .function: "Function"
-        case .image(let desc, _, _): desc
-        case .keyboardType(let keyboardType): "Keyboard Type - \(keyboardType.id)"
-        case .moveCursorBackward: "Move Cursor Backward"
-        case .moveCursorForward: "Move Cursor Forward"
-        case .nextKeyboard: "Next Keyboard"
-        case .nextLocale: "Next Locale"
-        case .none: nil
-        case .option: "Option"
-        case .primary(let returnKeyType): returnKeyType.id
-        case .settings: "Settings"
-        case .shift: "Shift"
-        case .space: KKL10n.space.text
-        case .systemImage(let desc, _, _): desc
-        case .systemSettings: "System Settings"
-        case .tab: "Tab"
-        case .text(let text): text
-        case .url(let url, _): "Open \(url?.absoluteString ?? "invalid url")"
         }
     }
 }

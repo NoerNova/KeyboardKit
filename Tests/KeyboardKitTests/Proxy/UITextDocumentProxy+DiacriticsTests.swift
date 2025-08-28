@@ -3,12 +3,11 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2024-04-12.
-//  Copyright © 2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2024-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS) || os(visionOS)
 import KeyboardKit
-import MockingKit
 import XCTest
 
 class UITextDocumentProxy_DiacriticsTests: XCTestCase {

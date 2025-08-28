@@ -3,13 +3,18 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2020-12-28.
-//  Copyright © 2020-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2020-2025 Daniel Saidi. All rights reserved.
 //
 
 #if os(iOS) || os(tvOS) || os(visionOS)
 import UIKit
 
 public extension UITextDocumentProxy {
+
+    /// Whether the proxy's input cursor is at a new line.
+    var isCursorAtNewLine: Bool {
+        documentContextBeforeInput?.last == "\n"
+    }
 
     /// Whether the proxy's input cursor is at the beginning
     /// of a sentence, with or without trailing whitespaces.
@@ -23,7 +28,7 @@ public extension UITextDocumentProxy {
         documentContextBeforeInput?.isLastSentenceEndedWithTrailingWhitespace ?? true
     }
 
-    /// The last ended sentence just before the input cursor.
+    /// The sentence just before the input cursor.
     var sentenceBeforeInput: String? {
         documentContextBeforeInput?.lastSentence
     }

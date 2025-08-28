@@ -3,19 +3,10 @@
     {
       "identity" : "keyboardkitpro",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/KeyboardKit/KeyboardKitPro.git",
+      "location" : "https://github.com/keyboardkit/keyboardkitpro",
       "state" : {
-        "revision" : "54df33fdf5c8dd4f2003e3939a1486bc67c12976",
-        "version" : "8.8.6"
-      }
-    },
-    {
-      "identity" : "mockingkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/danielsaidi/MockingKit.git",
-      "state" : {
-        "revision" : "bf3b0d022d5040c6980d99126373f6f9a030adca",
-        "version" : "1.4.2"
+        "revision" : "7de42afbedfe453435a61966c1c6e7f83bf5fca9",
+        "version" : "9.9.0-beta.2"
       }
     }
   ],

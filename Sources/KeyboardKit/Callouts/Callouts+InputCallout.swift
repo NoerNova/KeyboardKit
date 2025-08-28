@@ -3,17 +3,18 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2021-01-06.
-//  Copyright © 2021-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2021-2025 Daniel Saidi. All rights reserved.
 //
 
 import SwiftUI
 
 public extension Callouts {
-    
-    /// This callout can show the pressed char in a callout.
+
+    /// This callout can show the currenly pressed key, when
+    /// typing on an iPhone.
     ///
-    /// In iOS, this callout is presented when a button with
-    /// an input character is pressed.
+    /// This callout will adjust the button corner radius to
+    /// fit the style's or the keyboard layout configuration.
     struct InputCallout: View {
         
         /// Create a custom input callout.
@@ -22,88 +23,76 @@ public extension Callouts {
         ///   - calloutContext: The callout context to use.
         ///   - keyboardContext: The keyboard context to use.
         public init(
-            calloutContext: Context,
+            calloutContext: CalloutContext,
             keyboardContext: KeyboardContext
         ) {
-            self._calloutContext = ObservedObject(wrappedValue: calloutContext)
-            self._keyboardContext = ObservedObject(wrappedValue: keyboardContext)
-            self.initStyle = nil
+            self._calloutContext = .init(wrappedValue: calloutContext)
+            self._keyboardContext = .init(wrappedValue: keyboardContext)
         }
         
-        public typealias Context = CalloutContext.InputContext
-        
         @ObservedObject
-        private var calloutContext: Context
-        
+        private var calloutContext: CalloutContext
+
         @ObservedObject
         private var keyboardContext: KeyboardContext
         
-        @Environment(\.inputCalloutStyle)
-        private var envStyle
-        
+        @Environment(\.keyboardCalloutStyle)
+        private var style
+
         public var body: some View {
-            callout
-                .transition(.opacity)
-                .opacity(calloutContext.isActive ? 1 : 0)
-                .keyboardCalloutShadow(style: style.callout)
-                .position(position)
-                .allowsHitTesting(false)
+            VStack(spacing: 0) {
+                calloutBubble.offset(y: 1)
+                calloutButton
+            }
+            .compositingGroup()
+            .opacity(isActive ? 1 : 0)
+            .keyboardCalloutShadow(style: style)
+            .position(position)
+            .allowsHitTesting(false)
         }
-        
-        // MARK: - Deprecated
-        
-        @available(*, deprecated, message: "Use .inputCalloutStyle to apply the style instead.")
-        public init(
-            calloutContext: Context,
-            keyboardContext: KeyboardContext,
-            style: Callouts.InputCalloutStyle = .standard
-        ) {
-            self._calloutContext = ObservedObject(wrappedValue: calloutContext)
-            self._keyboardContext = ObservedObject(wrappedValue: keyboardContext)
-            self.initStyle = style
-        }
-        
-        private typealias Style = Callouts.InputCalloutStyle
-        private let initStyle: Style?
-        private var style: Style { initStyle ?? envStyle }
     }
 }
 
 private extension Callouts.InputCallout {
 
-    var callout: some View {
-        VStack(spacing: 0) {
-            calloutBubble.offset(y: 1)
-            calloutButton
-        }
-        .compositingGroup()
-    }
-
     var calloutBubble: some View {
-        Text(calloutContext.input ?? "")
-            .font(style.font.font)
+        Text(calloutContext.inputAction?.inputCalloutText ?? "")
+            .font(style.inputItemFont.font)
             .frame(minWidth: calloutSize.width, minHeight: calloutSize.height)
-            .foregroundColor(style.callout.textColor)
-            .background(style.callout.backgroundColor)
-            .cornerRadius(cornerRadius)
+            .foregroundColor(style.foregroundColor)
+            .background(style.backgroundColor)
+            .cornerRadius(style.cornerRadius)
     }
     
     var calloutButton: some View {
-        ButtonArea(frame: buttonFrame)
-            .calloutStyle(style.callout)
+        ButtonArea(
+            frame: buttonFrame,
+            buttonCornerRadius: style.buttonCornerRadius(for: keyboardContext)
+        )
     }
 }
 
 private extension Callouts.InputCallout {
-    
-    var buttonFrame: CGRect {
-        calloutContext.buttonFrame.insetBy(
-            dx: buttonInset.width,
-            dy: buttonInset.height)
+
+    var isActive: Bool {
+        isEnabled && calloutContext.inputAction != nil
     }
-    
-    var buttonInset: CGSize {
-        style.callout.buttonInset
+
+    var isEnabled: Bool {
+        keyboardContext.deviceTypeForKeyboard == .phone
+    }
+
+    var shouldEnforceSmallSize: Bool {
+        keyboardContext.deviceTypeForKeyboard == .phone && keyboardContext.interfaceOrientation.isLandscape
+    }
+}
+
+private extension Callouts.InputCallout {
+
+    var buttonFrame: CGRect {
+        let inset = style.buttonOverlayInset
+        return calloutContext.buttonFrame
+            .insetBy(dx: inset.width, dy: inset.height)
     }
     
     var buttonSize: CGSize {
@@ -119,23 +108,15 @@ private extension Callouts.InputCallout {
     
     var calloutSizeHeight: CGFloat {
         let smallSize = buttonSize.height
-        return shouldEnforceSmallSize ? smallSize : style.calloutSize.height
+        let calloutSize = style.inputItemMinSize
+        return shouldEnforceSmallSize ? smallSize : calloutSize.height
     }
     
     var calloutSizeWidth: CGFloat {
-        let minSize = buttonSize.width + 2 * style.callout.curveSize.width + style.callout.cornerRadius
-        return max(style.calloutSize.width, minSize)
-    }
-    
-    var cornerRadius: CGFloat {
-        shouldEnforceSmallSize ? style.callout.buttonCornerRadius : style.callout.cornerRadius
-    }
-}
-
-private extension Callouts.InputCallout {
-
-    var shouldEnforceSmallSize: Bool {
-        keyboardContext.deviceType == .phone && keyboardContext.interfaceOrientation.isLandscape
+        let totalCurveSize = 2 * style.curveSize.width
+        let minSize = buttonSize.width + totalCurveSize + style.cornerRadius
+        let calloutSize = style.inputItemMinSize
+        return max(calloutSize.width, minSize)
     }
 
     var position: CGPoint {
@@ -148,7 +129,7 @@ private extension Callouts.InputCallout {
 
     var positionY: CGFloat {
         let base = buttonFrame.origin.y + buttonSize.height/2 - calloutSize.height/2
-        let isEmoji = calloutContext.action?.isEmojiAction == true
+        let isEmoji = calloutContext.inputAction?.isEmojiAction == true
         if isEmoji { return base + 5 }
         return base
     }
@@ -162,24 +143,17 @@ private extension Callouts.InputCallout {
 
     struct Preview: View {
 
-        var style: Callouts.InputCalloutStyle {
-            var style = Callouts.InputCalloutStyle.standard
-            style.callout.backgroundColor = .blue
-            style.callout.textColor = .white
-            style.callout.buttonInset = CGSize(width: 3, height: 3)
-            return style
-        }
-
         @StateObject
-        var context = CalloutContext.InputContext(isEnabled: true)
+        var context = CalloutContext()
 
-        func button(for context: CalloutContext.InputContext) -> some View {
+        func button(for context: CalloutContext) -> some View {
             GeometryReader { geo in
                 GestureButton(
                     pressAction: { showCallout(for: geo) },
-                    endAction: context.resetWithDelay,
+                    endAction: context.resetInputActionWithDelay,
                     label: { _ in Color.red.cornerRadius(5) }
                 )
+                .onAppear { showCallout(for: geo) }
             }
             .frame(width: 40, height: 40)
             .padding()
@@ -187,7 +161,7 @@ private extension Callouts.InputCallout {
         }
 
         func showCallout(for geo: GeometryProxy) {
-            context.updateInput(for: .character("a"), in: geo)
+            context.updateInputAction(.character("a"), in: geo)
         }
 
         var buttonStack: some View {
@@ -203,7 +177,7 @@ private extension Callouts.InputCallout {
                 buttonStack
                 buttonStack
                 Button("Reset") {
-                    context.reset()
+                    context.resetInputAction()
                 }
             }
             .keyboardInputCalloutContainer(
@@ -214,8 +188,10 @@ private extension Callouts.InputCallout {
     }
 
     return Preview()
-        .inputCalloutStyle(.init(
-            callout: .init(backgroundColor: .red)
+        .keyboardCalloutStyle(.init(
+            backgroundColor: .blue,
+            foregroundColor: .yellow,
+            inputItemFont: KeyboardFont.largeTitle.weight(.bold)
         ))
 }
 #endif

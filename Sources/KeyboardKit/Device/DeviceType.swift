@@ -3,7 +3,7 @@
 //  KeyboardKit
 //
 //  Created by Daniel Saidi on 2022-01-19.
-//  Copyright © 2022-2024 Daniel Saidi. All rights reserved.
+//  Copyright © 2022-2025 Daniel Saidi. All rights reserved.
 //
 
 import Foundation
@@ -16,7 +16,7 @@ import UIKit
 ///
 /// The static ``current`` property will resolve the current
 /// device type.
-public enum DeviceType: String, CaseIterable, Equatable {
+public enum DeviceType: String, CaseIterable, KeyboardModel {
     
     case phone, pad, watch, mac, tv, vision, other
 }

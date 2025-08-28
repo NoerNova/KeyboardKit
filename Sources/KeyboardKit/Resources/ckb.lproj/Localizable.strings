@@ -3,11 +3,12 @@
  KeyboardKit
  
  Created by Daniel Saidi on 2022-01-03.
- Copyright © 2022 Daniel Saidi. All rights reserved.
+ Copyright © 2022-2025 Daniel Saidi. All rights reserved.
  */
 
 "locale" = "ckb";
 
+"capsLock" = "caps lock";
 "continue" = "continue";
 "done" = "تەواو";
 "emergencyCall" = "Emergency Call";
@@ -18,13 +19,26 @@
 "return" = "↳";
 "route" = "route";
 "search" = "گەڕان";
+"searchEmoji" = "گەڕان بۆ ئیمۆجی";
 "send" = "send";
 "space" = "بۆشایی";
+
 "switcherAlphabetic" = "ا‌ب‌ج";
 "switcherNumeric" = "١٢٣";
 "switcherSymbolic" = "#+=";
 
-/**
- For emojis localization, copy the text in `Emojis.md`, then
- replace this comment with it and translate the keys.
- */
+"EmojiCategory.frequent" = "Frequently Used";
+"EmojiCategory.smileysAndPeople" = "Smileys & People";
+"EmojiCategory.animalsAndNature" = "Animals & Nature";
+"EmojiCategory.foodAndDrink" = "Food & Drink";
+"EmojiCategory.activity" = "Activity";
+"EmojiCategory.travelAndPlaces" = "Travel & Places";
+"EmojiCategory.objects" = "Objects";
+"EmojiCategory.symbols" = "Symbols";
+"EmojiCategory.flags" = "Flags";
+
+"EmojiCategory.favorites" = "Favorites";
+"EmojiCategory.frequent" = "Frequently Used";
+"EmojiCategory.recent" = "Most Recent";
+
+// For emoji localization, copy & translate the English list.
