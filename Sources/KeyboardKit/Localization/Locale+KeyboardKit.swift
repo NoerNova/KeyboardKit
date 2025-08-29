@@ -32,7 +32,7 @@ public extension Locale {
             .northern_sami, .norwegian, .norwegian_nynorsk,
             .persian, .polish, .portuguese, .portuguese_brazil,
             .romanian, .russian,
-            .serbian, .serbian_latin, .shughni_tajik, .slovak, .slovenian, .spanish,
+            .serbian, .serbian_latin, .shan, .shughni_tajik, .slovak, .slovenian, .spanish,
             .spanish_latinAmerica, .spanish_mexico, .swedish, .swahili,
             .turkish,
             .ukrainian, .uzbek,
@@ -114,6 +114,7 @@ public extension Locale {
     static var russian: Locale { .withId("ru") }
     static var serbian: Locale { .withId("sr") }
     static var serbian_latin: Locale { .withId("sr-Latn") }
+    static var shan: Locale { .withId("shn") }
     static var shughni_tajik: Locale { .withId("tg") }
     static var slovak: Locale { .withId("sk") }
     static var slovenian: Locale { .withId("sl") }
@@ -202,6 +203,7 @@ public extension Locale {
         
         case .serbian: "serbian"
         case .serbian_latin: "serbian_latin"
+        case .shan: "shan"
         case .shughni_tajik: "shugni_tajik"
         case .slovenian: "slovenian"
         case .slovak: "slovak"
