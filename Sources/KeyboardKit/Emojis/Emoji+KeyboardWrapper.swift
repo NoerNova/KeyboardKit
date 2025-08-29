@@ -10,26 +10,24 @@ import SwiftUI
 import ISEmojiView
 
 public extension Emoji {
-    
-    /// This view is used as a keyboard emoji view eraser to
-    /// ensure that the view is only used for valid licenses.
+
     struct KeyboardWrapper: View {
         
         let actionHandler: KeyboardActionHandler
         let keyboardContext: KeyboardContext
         let calloutContext: CalloutContext?
-        let styleProvider: KeyboardStyleProvider
+        let styleService: KeyboardStyleService
         
         init(
             actionHandler: KeyboardActionHandler,
             keyboardContext: KeyboardContext,
             calloutContext: CalloutContext?,
-            styleProvider: KeyboardStyleProvider
+            styleService: KeyboardStyleService
         ) {
             self.actionHandler = actionHandler
             self.keyboardContext = keyboardContext
             self.calloutContext = calloutContext
-            self.styleProvider = styleProvider
+            self.styleService = styleService
         }
         
         public var body: some View {
@@ -42,7 +40,7 @@ public extension Emoji {
                     actionHandler.handle(action)
                 },
                 didPressChangeKeyboard: {
-                    actionHandler.handle(.keyboardType(.alphabetic(.lowercased)))
+                    actionHandler.handle(.keyboardType(.alphabetic))
                 },
                 didPressDeleteBackward: {
                     actionHandler.handle(.backspace)
@@ -53,6 +51,6 @@ public extension Emoji {
             )
         }
         
-        static let isEmojiKeyboardAvailable = true
+        static var isEmptyPlaceholder: Bool { false }
     }
 }
