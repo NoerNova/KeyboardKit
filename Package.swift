@@ -32,6 +32,7 @@ let package = Package(
         ),
         .testTarget(
             name: "KeyboardKitTests",
-            dependencies: ["KeyboardKit", "MockingKit", "ISEmojiView"]
+            dependencies: ["KeyboardKit", "ISEmojiView"]
+        )
     ]
 )
