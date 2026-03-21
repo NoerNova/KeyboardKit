@@ -11,7 +11,17 @@
 </p>
 
 
-# KeyboardKit
+# KeyboardKit (Custom Fork for ShanKeyboard)
+
+> **This is a custom fork** of [KeyboardKit](https://github.com/KeyboardKit/KeyboardKit) v9.9 (the last MIT-licensed release), maintained for the [ShanKeyboard-iOS](https://github.com/NoerNova/ShanKeyboard-iOS) project.
+>
+> ### Custom Changes
+> - **Shan locale support** — added Shan (shn) as a supported locale with localized UI strings in Shan script
+> - **Emoji keyboard integration** — replaced the empty placeholder view with a functional emoji keyboard using [ISEmojiView](https://github.com/NoerNova/ISEmojiView)
+> - **Restored BottomRow layout** — re-added `KeyboardLayout+BottomRow` for bottom row customization
+> - **Removed unused MockingKit dependency**
+
+---
 
 KeyboardKit lets you create amazing [custom keyboard extensions][About] with a few lines of code, using Swift & SwiftUI.
 
