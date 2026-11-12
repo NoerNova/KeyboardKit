@@ -91,8 +91,12 @@ private extension Callouts.InputCallout {
 
     var buttonFrame: CGRect {
         let inset = style.buttonOverlayInset
-        return calloutContext.buttonFrame
+        let frame = calloutContext.buttonFrame
             .insetBy(dx: inset.width, dy: inset.height)
+        // Before the first press the context frame is .zero, and insetting
+        // it gives CGRect.null (origin +infinity). Placing the callout at
+        // infinity breaks its layer on iOS 27, so use an empty rect instead.
+        return frame.isNull || frame.isInfinite ? .zero : frame
     }
     
     var buttonSize: CGSize {

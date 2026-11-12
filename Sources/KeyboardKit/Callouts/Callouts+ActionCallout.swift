@@ -165,8 +165,11 @@ private extension Callouts.ActionCallout {
 
     var buttonFrameForCharacters: CGRect {
         let inset = style.buttonOverlayInset
-        return calloutContext.buttonFrame
+        let frame = calloutContext.buttonFrame
             .insetBy(dx: inset.width, dy: inset.height)
+        // See InputCallout: insetting the initial .zero frame gives
+        // CGRect.null, whose origin is +infinity.
+        return frame.isNull || frame.isInfinite ? .zero : frame
     }
 
     var itemSize: CGSize {
