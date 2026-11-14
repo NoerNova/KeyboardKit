@@ -31,6 +31,7 @@ public extension Callouts {
         /// the default values for all other parameters.
         ///
         /// - Parameters:
+        ///   - appearance: The callout appearance, by default `.automatic`.
         ///   - actionItemFont: The action item font, by default `.title3`.
         ///   - actionItemMaxSize: The max action item size, by default `50x50` points.
         ///   - actionItemPadding: The intrinsic action item padding, by default `0x6` points.
@@ -49,6 +50,7 @@ public extension Callouts {
         ///   - shadowColor: The callout shadow color, by default 0.1 `.black`.
         ///   - shadowRadius: The callout shadow radius, by default `5`.
         public init(
+            appearance: Appearance = .automatic,
             actionItemFont: KeyboardFont? = nil,
             actionItemMaxSize: CGSize? = nil,
             actionItemPadding: CGSize? = nil,
@@ -67,6 +69,7 @@ public extension Callouts {
             shadowColor: Color? = nil,
             shadowRadius: CGFloat? = nil
         ) {
+            self.appearance = appearance
             self.actionItemFont = actionItemFont ?? .title3
             self.actionItemMaxSize = actionItemMaxSize ?? .init(width: 50, height: 50)
             self.actionItemPadding = actionItemPadding ?? .init(width: 0, height: 6)
@@ -85,6 +88,9 @@ public extension Callouts {
             self.shadowColor = shadowColor ?? .black.opacity(0.1)
             self.shadowRadius = shadowRadius ?? 5
         }
+
+        /// The callout appearance.
+        public var appearance: Appearance
 
         /// The action item font.
         public var actionItemFont: KeyboardFont
@@ -136,6 +142,56 @@ public extension Callouts {
 
         /// The callout shadow radius.
         public var shadowRadius: CGFloat
+
+        /// The gap between the pressed key and a floating callout.
+        public var floatingGap: CGFloat = 4
+
+        /// The corner radius of a floating input callout.
+        public var floatingInputCornerRadius: CGFloat = 12
+
+        /// How much bigger a floating input callout is than the key.
+        public var floatingInputSizeAdjustment = CGSize(width: 22, height: 24)
+
+        /// The corner radius of a floating action callout.
+        public var floatingActionCornerRadius: CGFloat = 22
+
+        /// The padding around the items of a floating action callout.
+        public var floatingActionPadding: CGFloat = 10
+
+        /// The corner radius of a floating action callout's selected item.
+        public var floatingActionItemCornerRadius: CGFloat = 11
+
+        /// How much bigger a floating action callout item is than the key.
+        public var floatingActionItemSizeAdjustment = CGSize(width: 4, height: 4)
+    }
+}
+
+public extension Callouts.CalloutStyle {
+
+    /// This enum defines how callouts are presented.
+    enum Appearance: Codable, Hashable, Sendable {
+
+        /// Use ``floating`` on iOS 27 and later, otherwise ``balloon``.
+        case automatic
+
+        /// A callout that grows out of the pressed key, as before iOS 27.
+        case balloon
+
+        /// A callout that floats above the pressed key, as in iOS 27.
+        case floating
+    }
+
+    /// Whether callouts should use the floating appearance.
+    var isFloating: Bool {
+        switch appearance {
+        case .balloon: return false
+        case .floating: return true
+        case .automatic:
+            #if os(iOS)
+            if #available(iOS 27.0, *) { return true }
+            #endif
+            return false
+        }
     }
 }
 

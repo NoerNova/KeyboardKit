@@ -39,6 +39,9 @@ public extension Keyboard {
         @Environment(\.keyboardButtonStyleBuilder)
         var buttonStyleBuilder
 
+        @Environment(\.keyboardButtonIsPressed)
+        private var isPressed
+
         @ObservedObject
         private var keyboardContext: KeyboardContext
         
@@ -66,7 +69,7 @@ private extension Keyboard.ButtonContent {
 
     @ViewBuilder
     var bodyContent: some View {
-        if let image = styleService.buttonImage(for: action) {
+        if let image = pressedBackspaceImage ?? styleService.buttonImage(for: action) {
             image.scaleEffect(styleService.buttonImageScaleFactor(for: action))
         } else if action == .space {
             spaceView
@@ -77,6 +80,18 @@ private extension Keyboard.ButtonContent {
         }
     }
     
+    /// Like the native iOS 26+ keyboard, a pressed backspace key shows a
+    /// filled icon.
+    var pressedBackspaceImage: Image? {
+        guard isPressed, action == .backspace else { return nil }
+        #if os(iOS)
+        if #available(iOS 26.0, *) {
+            return .keyboardBackspaceFill(for: keyboardContext.locale)
+        }
+        #endif
+        return nil
+    }
+
     var spaceView: some View {
         let text = styleService.buttonText(for: action) ?? ""
         let showLocale = keyboardContext.hasMultipleEnabledLocales

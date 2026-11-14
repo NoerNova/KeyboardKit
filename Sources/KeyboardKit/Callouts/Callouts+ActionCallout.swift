@@ -37,19 +37,136 @@ public extension Callouts {
         @Environment(\.keyboardCalloutStyle) private var style
 
         public var body: some View {
+            if style.isFloating {
+                floatingBody
+            } else {
+                balloonBody
+            }
+        }
+    }
+}
+
+private extension Callouts.ActionCallout {
+
+    var balloonBody: some View {
+        Button(action: calloutContext.resetSecondaryActions) {
+            VStack(alignment: alignment, spacing: 0) {
+                calloutBubble
+                calloutButton
+            }
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .opacity(isActive ? 1 : 0)
+        .keyboardCalloutShadow(style: style)
+        .position(position)
+        .offset(y: verticalOffset)
+    }
+}
+
+// MARK: - Floating (iOS 27)
+
+private extension Callouts.ActionCallout {
+
+    /// The iOS 27 callout: a rounded panel that floats above the key,
+    /// with a subtle highlight behind the selected item and no stem.
+    var floatingBody: some View {
+        GeometryReader { geo in
+            let layout = floatingLayout(in: geo.size)
             Button(action: calloutContext.resetSecondaryActions) {
-                VStack(alignment: alignment, spacing: 0) {
-                    calloutBubble
-                    calloutButton
-                }
+                floatingPanel(layout)
             }
             .buttonStyle(.plain)
-            .compositingGroup()
             .opacity(isActive ? 1 : 0)
-            .keyboardCalloutShadow(style: style)
-            .position(position)
-            .offset(y: verticalOffset)
+            .allowsHitTesting(isActive)
+            .position(x: layout.frame.midX, y: layout.frame.midY)
+            .offset(y: style.offset?.y ?? 0)
         }
+    }
+
+    func floatingPanel(_ layout: FloatingLayout) -> some View {
+        HStack(spacing: 0) {
+            ForEach(Array(actions.enumerated()), id: \.offset) {
+                floatingItem(for: $0.element, size: layout.itemSize, isSelected: isSelected($0.offset))
+            }
+        }
+        .padding(.horizontal, style.floatingActionPadding)
+        .padding(.vertical, layout.verticalPadding)
+        .background(
+            FloatingCalloutBackground(
+                style: style,
+                cornerRadius: min(style.floatingActionCornerRadius, layout.frame.height / 2)
+            )
+        )
+    }
+
+    func floatingItem(for action: KeyboardAction, size: CGSize, isSelected: Bool) -> some View {
+        calloutItem(for: action)
+            .frame(width: size.width, height: size.height)
+            .foregroundColor(isSelected ? style.selectedForegroundColor : style.foregroundColor)
+            .background(
+                RoundedRectangle(
+                    cornerRadius: style.floatingActionItemCornerRadius,
+                    style: .continuous
+                )
+                .fill(isSelected ? style.selectedBackgroundColor : .clear)
+            )
+    }
+
+    var floatingItemSize: CGSize {
+        let adjustment = style.floatingActionItemSizeAdjustment
+        let scale = useCompressedButtonSize ? calloutContext.compressedWidthScale : 1
+        var size = CGSize(
+            width: (buttonSize.width + adjustment.width) * scale,
+            height: buttonSize.height + adjustment.height
+        )
+        if isTextCallout {
+            size.width = max(size.width, 60)
+            return size
+        }
+        return size.limited(to: style.actionItemMaxSize)
+    }
+
+    struct FloatingLayout {
+        let frame: CGRect
+        let itemSize: CGSize
+        let verticalPadding: CGFloat
+    }
+
+    /// The first item (leading) or the last item (trailing) is centered
+    /// above the key, which is where the initial selection is. The panel
+    /// is then kept inside the keyboard at the edges.
+    ///
+    /// Native iOS 27 panels may extend above the keyboard, but a keyboard
+    /// extension is clipped to its own view, so when there isn't room the
+    /// panel first trims its vertical padding, then its item height.
+    func floatingLayout(in container: CGSize) -> FloatingLayout {
+        let padding = style.floatingActionPadding
+        let minimumPadding = min(3, padding)
+        let available = buttonFrame.minY - style.floatingGap
+        var item = floatingItemSize
+        var verticalPadding = padding
+        if item.height + 2 * padding > available {
+            verticalPadding = max(minimumPadding, (available - item.height) / 2)
+            let fittingHeight = available - 2 * verticalPadding
+            item.height = max(min(item.height, fittingHeight), 0.8 * buttonSize.height)
+        }
+        let size = CGSize(
+            width: CGFloat(actions.count) * item.width + 2 * padding,
+            height: item.height + 2 * verticalPadding
+        )
+        let edge = item.width / 2 + padding
+        let midX = isLeading
+            ? buttonFrame.midX - edge + size.width / 2
+            : buttonFrame.midX + edge - size.width / 2
+        let clampedMidX = midX.clampedForCallout(width: size.width, in: container.width)
+        let frame = CGRect(
+            x: clampedMidX - size.width / 2,
+            y: buttonFrame.minY - style.floatingGap - size.height,
+            width: size.width,
+            height: size.height
+        )
+        return FloatingLayout(frame: frame, itemSize: item, verticalPadding: verticalPadding)
     }
 }
 

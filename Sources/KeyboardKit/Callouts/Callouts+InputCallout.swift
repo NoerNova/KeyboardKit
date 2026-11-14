@@ -40,16 +40,84 @@ public extension Callouts {
         private var style
 
         public var body: some View {
-            VStack(spacing: 0) {
-                calloutBubble.offset(y: 1)
-                calloutButton
+            if style.isFloating {
+                floatingBody
+            } else {
+                balloonBody
             }
-            .compositingGroup()
-            .opacity(isActive ? 1 : 0)
-            .keyboardCalloutShadow(style: style)
-            .position(position)
-            .allowsHitTesting(false)
         }
+    }
+}
+
+private extension Callouts.InputCallout {
+
+    var balloonBody: some View {
+        VStack(spacing: 0) {
+            calloutBubble.offset(y: 1)
+            calloutButton
+        }
+        .compositingGroup()
+        .opacity(isActive ? 1 : 0)
+        .keyboardCalloutShadow(style: style)
+        .position(position)
+        .allowsHitTesting(false)
+    }
+
+    /// The iOS 27 callout: a bubble that floats above the key, with no
+    /// stem, so the pressed key itself stays visible.
+    var floatingBody: some View {
+        GeometryReader { geo in
+            let frame = floatingFrame(in: geo.size)
+            Text(calloutContext.inputAction?.inputCalloutText ?? "")
+                .font(style.inputItemFont.font)
+                .foregroundColor(style.foregroundColor)
+                .frame(width: frame.width, height: frame.height)
+                .background(
+                    FloatingCalloutBackground(
+                        style: style,
+                        cornerRadius: style.floatingInputCornerRadius
+                    )
+                )
+                .opacity(isActive ? 1 : 0)
+                .position(x: frame.midX, y: frame.midY)
+        }
+        .allowsHitTesting(false)
+    }
+
+    var floatingPreferredSize: CGSize {
+        let adjustment = style.floatingInputSizeAdjustment
+        let width = max(style.inputItemMinSize.width, buttonSize.width + adjustment.width)
+        let height = shouldEnforceSmallSize ? buttonSize.height : buttonSize.height + adjustment.height
+        return CGSize(width: width, height: height)
+    }
+
+    /// Centered above the key, but kept inside the keyboard. Native iOS 27
+    /// callouts may extend above the keyboard, but a keyboard extension is
+    /// clipped to its own view, so the top row gets a shorter bubble.
+    func floatingFrame(in container: CGSize) -> CGRect {
+        let preferred = floatingPreferredSize
+        let available = buttonFrame.minY - style.floatingGap
+        let height = max(min(preferred.height, available), buttonSize.height)
+        let midX = buttonFrame.midX.clampedForCallout(width: preferred.width, in: container.width)
+        return CGRect(
+            x: midX - preferred.width / 2,
+            y: buttonFrame.minY - style.floatingGap - height,
+            width: preferred.width,
+            height: height
+        )
+    }
+}
+
+extension CGFloat {
+
+    /// Clamp a callout's center x so that the callout stays within a
+    /// container of the provided width. Like iOS 27, an edge callout is
+    /// pinned flush to the keyboard edge.
+    func clampedForCallout(width: CGFloat, in containerWidth: CGFloat, margin: CGFloat = 0) -> CGFloat {
+        let minX = width / 2 + margin
+        let maxX = containerWidth - width / 2 - margin
+        guard containerWidth > 0, minX <= maxX else { return self }
+        return Swift.min(Swift.max(self, minX), maxX)
     }
 }
 

@@ -81,13 +81,27 @@ public struct KeyboardViewItem<Content: View>: View, KeyboardButtonStyleResolver
     
     @ObservedObject var keyboardContext: KeyboardContext
     
+    /// The pressed state that the button draws. It follows the gesture,
+    /// but stays on for at least ``minimumPressedDuration``.
     @State var isPressed = false
+
+    /// Bumped on every press, so a delayed un-press can tell if a new
+    /// press has started since it was scheduled.
+    @State private var pressCount = 0
+
+    @State private var pressDate = Date.distantPast
+
+    /// Like the native keyboard, a quick tap still flashes the key. Without
+    /// this, a tap's press and release can both land before a frame with the
+    /// pressed state is drawn, so the key shows no feedback at all.
+    static var minimumPressedDuration: TimeInterval { 0.15 }
     
     public var body: some View {
         let buttonStyle = buttonStyle
         ZStack(alignment: item.alignment) {
             Color.clearInteractable
             content
+                .environment(\.keyboardButtonIsPressed, isPressed)
         }
         .opacity(contentOpacity)
         .animation(.default, value: keyboardContext.isSpaceDragGestureActive)
@@ -105,7 +119,7 @@ public struct KeyboardViewItem<Content: View>: View, KeyboardButtonStyleResolver
             calloutContext: calloutContext,
             additionalTapArea: isNextProbability * 5,
             edgeInsets: item.edgeInsets,
-            isPressed: $isPressed,
+            isPressed: pressedBinding,
             isGestureAutoCancellable: isGestureAutoCancellable
         )
         .overlay(alignment: .bottomLeading) { spaceMenuLeading(buttonStyle) }
@@ -114,6 +128,29 @@ public struct KeyboardViewItem<Content: View>: View, KeyboardButtonStyleResolver
 }
 
 private extension KeyboardViewItem {
+
+    var pressedBinding: Binding<Bool> {
+        Binding(get: { isPressed }, set: { setPressed($0) })
+    }
+
+    func setPressed(_ pressed: Bool) {
+        if pressed {
+            pressCount += 1
+            pressDate = Date()
+            isPressed = true
+            return
+        }
+        let remaining = Self.minimumPressedDuration - Date().timeIntervalSince(pressDate)
+        guard remaining > 0 else {
+            isPressed = false
+            return
+        }
+        let count = pressCount
+        DispatchQueue.main.asyncAfter(deadline: .now() + remaining) {
+            guard pressCount == count else { return }
+            isPressed = false
+        }
+    }
     
     var buttonStyle: Keyboard.ButtonStyle {
         item.action.isSpacer ? .spacer : keyboardButtonStyle(isPressed: isPressed)
@@ -225,4 +262,10 @@ private extension KeyboardViewItem {
     
     return Preview()
         // .keyboardSpaceTrailingAction(.localeContextMenu)
+}
+
+public extension EnvironmentValues {
+
+    /// Whether the keyboard button that contains the view is pressed.
+    @Entry var keyboardButtonIsPressed = false
 }

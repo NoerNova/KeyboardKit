@@ -22,6 +22,8 @@ public extension Image {
     static let keyboardAudioFeedbackEnabled = symbol("speaker.wave.3.fill")
     static let keyboardBackspace = symbol("delete.left")
     static let keyboardBackspaceRtl = symbol("delete.right")
+    static let keyboardBackspaceFill = symbol("delete.left.fill")
+    static let keyboardBackspaceFillRtl = symbol("delete.right.fill")
     static let keyboardBrightnessDown = symbol("sun.min")
     static let keyboardBrightnessUp = symbol("sun.max")
     static let keyboardCommand = symbol("command")
@@ -79,6 +81,11 @@ public extension Image {
 
     static func keyboardBackspace(for locale: Locale) -> Image {
         locale.keyboardIcon(.keyboardBackspace, rtlIcon: .keyboardBackspaceRtl)
+    }
+
+    /// The filled backspace icon, which iOS 27 shows while pressed.
+    static func keyboardBackspaceFill(for locale: Locale) -> Image {
+        locale.keyboardIcon(.keyboardBackspaceFill, rtlIcon: .keyboardBackspaceFillRtl)
     }
 
     static func keyboardGo(for locale: Locale) -> Image {
